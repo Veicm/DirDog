@@ -1,0 +1,28 @@
+{
+  "files": [
+    {
+      "parent_dir": "C:\\path\\to\\dir",
+      "file_name": "test.txt",
+      "file_extension": ".txt",
+      "last_modified": 1765648720,
+      "SHA-256-Hash": "4575862a78a4b7e6d382c58664b8e67c144b5cac753d78c29a811778dcd68199",
+      "action": "edit"
+    },
+    {
+      "parent_dir": "C:\\path\\to\\dir",
+      "file_name": "test_2.txt",
+      "file_extension": ".txt",
+      "last_modified": 1765648720,
+      "SHA-256-Hash": "4575862a78a4b7e6d382c58664b8e67c144b5cac753d78c29a811778dcd68199",
+      "action": "add"
+    },
+    {
+      "parent_dir": "C:\\path\\to\\dir",
+      "file_name": "test_3.txt",
+      "file_extension": ".txt",
+      "last_modified": 1765648720,
+      "SHA-256-Hash": "4575862a78a4b7e6d382c58664b8e67c144b5cac753d78c29a811778dcd68199",
+      "action": "remove"
+    }
+  ]
+}
