@@ -50,10 +50,10 @@ body:
       required: false
 
   - type: dropdown
-    id: distribution
+    id: os
     attributes:
-      label: "Distribution"
-      description: "Select your OS distribution."
+      label: "OS"
+      description: "Select your OS."
       multiple: false
       options:
         - "Windows-11"
@@ -63,7 +63,7 @@ body:
       required: true
 
   - type: input
-    id: other_distribution
+    id: other_os
     attributes:
       label: "If Other, specify"
       description: "Enter your OS if it was not listed above."
