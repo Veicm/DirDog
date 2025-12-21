@@ -1,28 +1,40 @@
 {
   "files": [
+        {
+      "parent_dir": "C:\\path\\to\\dir",
+      "file_name": "test_0",
+      "file_extension": ".txt",
+      "new_path": "B:\\Coden\\Schule\\Archivierung_tool\\checked_folder\\adada\\test_0.txt",
+      "last_modified": 1766275324,
+      "SHA-256-Hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "action": "Renamed"  /*Can also mean that a file got moved. Then see new_path*/
+    },
     {
       "parent_dir": "C:\\path\\to\\dir",
       "file_name": "test.txt",
       "file_extension": ".txt",
+      "new_path": null,
       "last_modified": 1765648720,
       "SHA-256-Hash": "4575862a78a4b7e6d382c58664b8e67c144b5cac753d78c29a811778dcd68199",
-      "action": "edit"
+      "action": "Changed" 
     },
     {
       "parent_dir": "C:\\path\\to\\dir",
       "file_name": "test_2.txt",
       "file_extension": ".txt",
+      "new_path": null,
       "last_modified": 1765648720,
       "SHA-256-Hash": "4575862a78a4b7e6d382c58664b8e67c144b5cac753d78c29a811778dcd68199",
-      "action": "add"
+      "action": "Created"
     },
     {
       "parent_dir": "C:\\path\\to\\dir",
       "file_name": "test_3.txt",
       "file_extension": ".txt",
+      "new_path": null,
       "last_modified": 1765648720,
       "SHA-256-Hash": "4575862a78a4b7e6d382c58664b8e67c144b5cac753d78c29a811778dcd68199",
-      "action": "remove"
+      "action": "Deleted"
     }
   ]
 }
