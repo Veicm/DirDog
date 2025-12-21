@@ -1,0 +1,94 @@
+{
+  "files": [
+    {
+      "parent_dir": "B:\\Coden\\Schule\\Archivierung_tool\\checked_folder\\adada",
+      "file_name": "4555",
+      "file_extension": ".txt",
+      "new_path": "B:\\Coden\\Schule\\Archivierung_tool\\checked_folder\\adada\\666.txt",
+      "last_modified": 1766275324,
+      "SHA-256-Hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "action": "Renamed"
+    },
+    {
+      "parent_dir": "B:\\Coden\\Schule\\Archivierung_tool\\checked_folder\\adada",
+      "file_name": "666",
+      "file_extension": ".txt",
+      "new_path": null,
+      "last_modified": 1766275348,
+      "SHA-256-Hash": "07f5937c9760f50867a78fa68982b1096cec0798448abf9395cd778fcded6f8d",
+      "action": "Changed"
+    },
+    {
+      "parent_dir": "B:\\Coden\\Schule\\Archivierung_tool\\checked_folder\\adada",
+      "file_name": "666",
+      "file_extension": ".txt",
+      "new_path": null,
+      "last_modified": 1766275358,
+      "SHA-256-Hash": null,
+      "action": "Deleted"
+    },
+    {
+      "parent_dir": "B:\\Coden\\Schule\\Archivierung_tool\\checked_folder",
+      "file_name": "666",
+      "file_extension": ".txt",
+      "new_path": null,
+      "last_modified": 1766275359,
+      "SHA-256-Hash": "07f5937c9760f50867a78fa68982b1096cec0798448abf9395cd778fcded6f8d",
+      "action": "Created"
+    },
+    {
+      "parent_dir": "B:\\Coden\\Schule\\Archivierung_tool\\checked_folder",
+      "file_name": "666",
+      "file_extension": ".txt",
+      "new_path": null,
+      "last_modified": 1766275359,
+      "SHA-256-Hash": "07f5937c9760f50867a78fa68982b1096cec0798448abf9395cd778fcded6f8d",
+      "action": "Changed"
+    },
+    {
+      "parent_dir": "B:\\Coden\\Schule\\Archivierung_tool\\checked_folder",
+      "file_name": "adada",
+      "file_extension": "",
+      "new_path": null,
+      "last_modified": 1766275359,
+      "SHA-256-Hash": null,
+      "action": "Changed"
+    },
+    {
+      "parent_dir": "B:\\Coden\\Schule\\Archivierung_tool\\checked_folder",
+      "file_name": "a",
+      "file_extension": ".txt",
+      "new_path": null,
+      "last_modified": 1766275515,
+      "SHA-256-Hash": null,
+      "action": "Deleted"
+    },
+    {
+      "parent_dir": "B:\\Coden\\Schule\\Archivierung_tool\\checked_folder",
+      "file_name": "Textdokument (neu)",
+      "file_extension": ".txt",
+      "new_path": null,
+      "last_modified": 1766275532,
+      "SHA-256-Hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "action": "Created"
+    },
+    {
+      "parent_dir": "B:\\Coden\\Schule\\Archivierung_tool\\checked_folder",
+      "file_name": "Textdokument (neu)",
+      "file_extension": ".txt",
+      "new_path": null,
+      "last_modified": 1766275553,
+      "SHA-256-Hash": null,
+      "action": "Deleted"
+    },
+    {
+      "parent_dir": "B:\\Coden\\Schule\\Archivierung_tool\\checked_folder",
+      "file_name": "666",
+      "file_extension": ".txt",
+      "new_path": "B:\\Coden\\Schule\\Archivierung_tool\\checked_folder\\555.txt",
+      "last_modified": 1766275562,
+      "SHA-256-Hash": "07f5937c9760f50867a78fa68982b1096cec0798448abf9395cd778fcded6f8d",
+      "action": "Renamed"
+    }
+  ]
+}
