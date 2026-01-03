@@ -1,11 +1,18 @@
-def dummy_receiver() -> list[dict[str, str | int]]:
-    """
-    _ description _
+from database.handler import Handler
 
-    Args:
-        variable (any): _ variable description _.
 
-    Returns:
-        int: _ value description _.
-    """
-    raise NotImplementedError("function 'dummy_receiver()' is not implemented yet.")
+class IPS:
+    def __init__(self) -> None:
+        self.handler = Handler()
+
+    def dummy_receiver() -> None:
+        """
+        _ description _
+
+        Args:
+            variable (any): _ variable description _.
+
+        Returns:
+            int: _ value description _.
+        """
+        self.handler.process_data(file_data)
