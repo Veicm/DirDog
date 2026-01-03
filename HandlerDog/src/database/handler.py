@@ -54,7 +54,8 @@ class Handler:
 
     def change(self, data: dict[str, str | int | None]) -> None:
         """
-        _ description _
+        This function is used to edit an entry by searching the file name and
+        updating the meta data.
 
         Args:
             data (dict[str, str | int | None]): The file data in the format, saved in api.json.
