@@ -62,11 +62,44 @@ class Handler:
         Returns:
             None
         """
-        raise NotImplementedError("function 'change()' is not implemented yet.")
+        parent_dir: str | int | None = data.get("parent_dir")
+        if not isinstance(parent_dir, str):
+            raise ValueError(f"{parent_dir} is not a valid value of 'parent_dir'.")
+        self.cursor_db.execute(f'SELECT * FROM "{parent_dir}"')
+        entries: list[tuple[int, str, str, int, str]] = self.cursor_db.fetchall()
+        for entry in entries:
+            if entry[1] == data.get("file_name"):
+
+                updated_entry: tuple[
+                    int,
+                    str | int | None,
+                    str | int | None,
+                    str | int | None,
+                    str | int | None,
+                ] = (
+                    entry[0],
+                    data.get("file_name"),
+                    data.get("file_extension"),
+                    data.get("last_modified"),
+                    data.get("SHA-256-Hash"),
+                )
+
+                self.cursor_db.execute(
+                    f'UPDATE "{parent_dir}" SET file_name = ?, file_extension = ?, last_modified = ?, hash = ? WHERE id = ?',
+                    (
+                        updated_entry[1],
+                        updated_entry[2],
+                        updated_entry[3],
+                        updated_entry[4],
+                        updated_entry[0],
+                    ),
+                )
+        self.connection_db.commit()
 
     def create(self, data: dict[str, str | int | None]) -> None:
         """
-        _ description _
+        This function is used to create a new entry into the db.
+        It creates a new table and adds the dir to 'known_dirs' in the storage.json file if needed.
 
         Args:
             data (dict[str, str | int | None]): The file data in the format, saved in api.json.
@@ -167,12 +200,12 @@ class Handler:
                 consecutive ID after the highest one.
         """
         if archive:
-            self.cursor_archive.execute(f"SELECT * FROM '{table}'")
+            self.cursor_archive.execute(f'SELECT * FROM "{table}"')
             entries: list[tuple[int, str, str, int, str]] = (
                 self.cursor_archive.fetchall()
             )
         else:
-            self.cursor_db.execute(f"SELECT * FROM '{table}'")
+            self.cursor_db.execute(f'SELECT * FROM "{table}"')
             entries: list[tuple[int, str, str, int, str]] = self.cursor_db.fetchall()
 
         is_null: bool = False
@@ -200,14 +233,14 @@ class Handler:
 def main() -> None:
     handler = Handler(".\\data\\demo.db", ".\\data\\demo_archive.db")
 
-    handler.create(
+    handler.change(
         {
             "parent_dir": "C:\\path\\to\\dir_2",
             "file_name": "test_3.txt",
             "file_extension": ".txt",
             "new_path": None,
-            "last_modified": 1765648720,
-            "SHA-256-Hash": "4575862a78a4b7e6d382c58664b8e67c144b5cac753d78c29a811778dcd68199",
+            "last_modified": 3767641720,
+            "SHA-256-Hash": "5555862a78a4b7e6d382c58664b8e67c144b5cac754d78c29a811778dcd68199",
             "action": "Changed",
         }
     )
