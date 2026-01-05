@@ -40,9 +40,11 @@ class Handler:
             case _:
                 raise ValueError(f"{data.get("action")} is not a valid action type.")
 
-    def rename(self, data: dict[str, str | int | None]) -> None:
+    def rename(
+        self, data: dict[str, str | int | None]
+    ) -> None:  # TODO: add an option for subdirs
         """
-        _ description _
+        Renames an entry which matches the hash of the given data.
 
         Args:
             data (dict[str, str | int | None]): The file data in the format, saved in api.json.
@@ -50,7 +52,39 @@ class Handler:
         Returns:
             None
         """
-        raise NotImplementedError("function 'rename()' is not implemented yet.")
+        parent_dir: str | int | None = data.get("parent_dir")
+        if not isinstance(parent_dir, str):
+            raise ValueError(f"{parent_dir} is not a valid value of 'parent_dir'.")
+        self.cursor_db.execute(f'SELECT * FROM "{parent_dir}"')
+        entries: list[tuple[int, str, str, int, str]] = self.cursor_db.fetchall()
+        for entry in entries:
+            if entry[4] == data.get("SHA-256-Hash"):
+
+                updated_entry: tuple[
+                    int,
+                    str | int | None,
+                    str | int | None,
+                    str | int | None,
+                    str | int | None,
+                ] = (
+                    entry[0],
+                    data.get("file_name"),
+                    data.get("file_extension"),
+                    data.get("last_modified"),
+                    data.get("SHA-256-Hash"),
+                )
+
+                self.cursor_db.execute(
+                    f'UPDATE "{parent_dir}" SET file_name = ?, file_extension = ?, last_modified = ?, hash = ? WHERE id = ?',
+                    (
+                        updated_entry[1],
+                        updated_entry[2],
+                        updated_entry[3],
+                        updated_entry[4],
+                        updated_entry[0],
+                    ),
+                )
+        self.connection_db.commit()
 
     def change(self, data: dict[str, str | int | None]) -> None:
         """
@@ -333,7 +367,7 @@ def main() -> None:
             "new_path": None,
             "last_modified": 4767641720,
             "SHA-256-Hash": "5555862a78a4b7e6d382c58664b8e67c144b5cac754d78c29a811778dcd68199",
-            "action": "Deleted",
+            "action": "Renamed",
         }
     )
 
