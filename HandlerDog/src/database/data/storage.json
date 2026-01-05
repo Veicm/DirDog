@@ -1,6 +1,4 @@
 {
-    "known_dirs": [
-        "C:\\path\\to\\dir",
-        "C:\\path\\to\\dir_2"
-    ]
+  "known_dirs": ["C:\\path\\to\\dir"],
+  "known_archives": ["C:\\path\\to\\dir"]
 }
