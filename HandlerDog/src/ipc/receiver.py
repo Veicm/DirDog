@@ -6,11 +6,14 @@ from database.handler import Handler
 class IPC:
     """Provide an IPC server that receives file events and forwards them to a handler."""
 
-    def __init__(self) -> None:
-        """Initialize the IPC listener and accept an incoming connection."""
-        self.handler = Handler(
-            ".\\..\\database\\data\\demo.db", ".\\..\\database\\data\\demo_archive.db"
-        )
+    def __init__(self, db_path: str, archive_path: str) -> None:
+        """Initialize the IPC listener and accept an incoming connection.
+
+        Args:
+            db_path (str): Path to the main SQLite database.
+            archive_path (str): Path to the archive SQLite database.
+        """
+        self.handler = Handler(db_path, archive_path)
         self.address = ("localhost", 6000)
         self.listener = Listener(self.address, authkey=b"secret password")
         self.connection: Connection[Any, Any] = self.listener.accept()
@@ -49,7 +52,9 @@ class IPC:
 
 def main() -> None:
     """Start the IPC server and begin receiving messages."""
-    ipc = IPC()
+    ipc = IPC(
+        ".\\..\\database\\data\\demo.db", ".\\..\\database\\data\\demo_archive.db"
+    )
     ipc.receive()
 
 
