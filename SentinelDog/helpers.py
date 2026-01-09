@@ -22,14 +22,26 @@ def push_change_files_into_api(path,type_of_action,new_path=None):
     parent_dir = str(Path(path).parent)
     extension = str(Path(path).suffix)
     file_name = str(Path(path).stem)
+    # print("--------------------------------------------")
+    # print(data["path"])
+    # print("----")
+    # print(path)
+
+
+    # print("-------------------------------------------------")
+    if str(parent_dir) !=str(data["path"]):
+        print("Eintrag wurde übersprungen da die Datei in einem Unterordner liegt!")
+        return
+
     if type_of_action == "Deleted":
         hashed_file = None
     else:
         try:
-            hashed_file = str(sha256_file(new_path if new_path else path))
+            hashed_file = str(sha256_file(new_path if new_path else path))    
         except (FileNotFoundError, PermissionError):
             hashed_file = None
-
+            print("Eintrag wurde übersprungen da ein Ordner betroffen war !")
+            return
 
     # print(extension)
     # print(file_name)
