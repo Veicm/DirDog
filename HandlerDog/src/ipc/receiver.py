@@ -1,18 +1,57 @@
+from multiprocessing.connection import Connection, Listener
+from typing import Any
 from database.handler import Handler
 
 
-class IPS:
-    def __init__(self) -> None:
-        self.handler = Handler()
+class IPC:
+    """Provide an IPC server that receives file events and forwards them to a handler."""
 
-    def dummy_receiver() -> None:
+    def __init__(self) -> None:
+        """Initialize the IPC listener and accept an incoming connection."""
+        self.handler = Handler(
+            ".\\..\\database\\data\\demo.db", ".\\..\\database\\data\\demo_archive.db"
+        )
+        self.address = ("localhost", 6000)
+        self.listener = Listener(self.address, authkey=b"secret password")
+        self.connection: Connection[Any, Any] = self.listener.accept()
+        print("connection accepted from", self.listener.last_accepted)
+
+    def receive(self) -> None:
+        """Continuously receive and process incoming IPC messages.
+
+        The method blocks on the connection and processes received data until a
+        ``"close"`` message is received, at which point the connection and
+        listener are shut down.
         """
-        _ description _
+        while True:
+            data_query: list[dict[str, str | int | None]] | str = self.connection.recv()
+            if data_query == "close":
+                self.connection.close()
+                break
+            elif not isinstance(data_query, str):
+                self.handle_data(data_query)
+            else:
+                raise ValueError(
+                    f"{data_query} of type {type(data_query)} is not a valid content type for data_query."
+                )
+        self.listener.close()
+
+    def handle_data(self, data_query: list[dict[str, str | int | None]]) -> None:
+        """Process a batch of file event dictionaries.
 
         Args:
-            variable (any): _ variable description _.
-
-        Returns:
-            int: _ value description _.
+            data_query (list[dict[str, str | int | None]]): A list of file event
+                payloads that are forwarded to the handler.
         """
-        self.handler.process_data(file_data)
+        for data in data_query:
+            self.handler.process_data(data)
+
+
+def main() -> None:
+    """Start the IPC server and begin receiving messages."""
+    ipc = IPC()
+    ipc.receive()
+
+
+if __name__ == "__main__":
+    main()
