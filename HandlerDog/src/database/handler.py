@@ -3,8 +3,15 @@ import json
 
 
 class Handler:
+    """Handle file metadata synchronization between a main and an archive database."""
 
     def __init__(self, db_path: str, archive_path: str) -> None:
+        """Initialize database connections and cursors.
+
+        Args:
+            db_path (str): Path to the main SQLite database.
+            archive_path (str): Path to the archive SQLite database.
+        """
         self.connection_db: sqlite3.Connection = sqlite3.connect(db_path)
         self.cursor_db: sqlite3.Cursor = self.connection_db.cursor()
 
@@ -14,15 +21,13 @@ class Handler:
         self.storage_path: str = ".\\data\\storage.json"  # TODO: Change path maybe
 
     def process_data(self, data: dict[str, str | int | None]) -> None:
-        """
-        This function takes the file data and decides, based on the
-        provided information, which action should be executed.
+        """Dispatch a file action to the corresponding handler.
+
+        The action is selected based on the ``"action"`` field in ``data``.
 
         Args:
-            data (dict[str, str | int | None]): The file data in the format, saved in api.json.
-
-        Returns:
-            None
+            data (dict[str, str | int | None]): File metadata as defined in
+                ``api.json``.
         """
         match data.get("action"):
             case "Renamed":
@@ -40,17 +45,12 @@ class Handler:
             case _:
                 raise ValueError(f"{data.get("action")} is not a valid action type.")
 
-    def rename(
-        self, data: dict[str, str | int | None]
-    ) -> None:  # TODO: add an option for subdirs
-        """
-        Renames an entry which matches the hash of the given data.
+    def rename(self, data: dict[str, str | int | None]) -> None:
+        """Update an existing entry by matching its hash.
 
         Args:
-            data (dict[str, str | int | None]): The file data in the format, saved in api.json.
-
-        Returns:
-            None
+            data (dict[str, str | int | None]): File metadata as defined in
+                ``api.json``.
         """
         parent_dir: str | int | None = data.get("parent_dir")
         if not isinstance(parent_dir, str):
@@ -87,15 +87,11 @@ class Handler:
         self.connection_db.commit()
 
     def change(self, data: dict[str, str | int | None]) -> None:
-        """
-        This function is used to edit an entry by searching the file name and
-        updating the meta data.
+        """Modify an existing entry by matching its file name.
 
         Args:
-            data (dict[str, str | int | None]): The file data in the format, saved in api.json.
-
-        Returns:
-            None
+            data (dict[str, str | int | None]): File metadata as defined in
+                ``api.json``.
         """
         parent_dir: str | int | None = data.get("parent_dir")
         if not isinstance(parent_dir, str):
@@ -132,15 +128,14 @@ class Handler:
         self.connection_db.commit()
 
     def create(self, data: dict[str, str | int | None]) -> None:
-        """
-        This function is used to create a new entry into the db.
-        It creates a new table and adds the dir to 'known_dirs' in the storage.json file if needed.
+        """Insert a new file entry into the database.
+
+        If the directory is not yet known, a new table is created and the
+        directory is registered in ``storage.json``.
 
         Args:
-            data (dict[str, str | int | None]): The file data in the format, saved in api.json.
-
-        Returns:
-            None
+            data (dict[str, str | int | None]): File metadata as defined in
+                ``api.json``.
         """
         parent_dir: str | int | None = data.get("parent_dir")
         if not isinstance(parent_dir, str):
@@ -163,18 +158,15 @@ class Handler:
         self.connection_db.commit()
 
     def delete(self, data: dict[str, str | int | None]) -> None:
-        """
-        Deletes a entry which matches a given data set in file name and SHA-256-Hash.
-        This entry then gets added into the archive database.
+        """Remove an entry and move it to the archive database.
 
-        This function also ensures that a table in the main db gets removed if it's empty and
-        to crate a new table in the archive db if needed.
+        The entry is matched by file name and hash. If the source table becomes
+        empty, it is removed and the directory is unregistered. A corresponding
+        archive table is created if required.
 
         Args:
-            data (dict[str, str | int | None]): The file data in the format, saved in api.json.
-
-        Returns:
-            None
+            data (dict[str, str | int | None]): File metadata as defined in
+                ``api.json``.
         """
         parent_dir: str | int | None = data.get("parent_dir")
         if not isinstance(parent_dir, str):
@@ -227,16 +219,16 @@ class Handler:
     ###############################################################################################################################
 
     def _is_new_dir(self, dir_path: str, archive: bool = False) -> bool:
-        """
-        This function checks if a give dir path is already known or not.
+        """Check whether a directory is already registered.
 
         Args:
-            dir_path (str): The absolute path of the dir [Example: "C:\\path\\to\\dir"].
-            archive (bool): This argument is used to decide if the archive db
-                should be used or not. Defaults to False.
+            dir_path (str): Absolute directory path.
+            archive (bool): Whether to check the archive registry instead of the
+                main registry.
 
         Returns:
-            bool: True if the dir is new and False if the dir is already known.
+            bool: ``True`` if the directory is not yet registered, otherwise
+            ``False``.
         """
         json_data = {}
         with open(self.storage_path) as json_file:
@@ -252,16 +244,11 @@ class Handler:
         return True
 
     def _add_new_dir_to_storage(self, dir: str, archive: bool = False) -> None:
-        """
-        This function adds a new dir to the storage.json file.
+        """Register a new directory in ``storage.json``.
 
         Args:
-            dir (str): The dir, which should be added to the storage.
-            archive (bool): This argument is used to decide if the archive storage
-                should be used or not. Defaults to False.
-
-        Returns:
-            None
+            dir (str): Directory path to register.
+            archive (bool): Whether to register the directory as an archive.
         """
         with open(self.storage_path) as json_file:
             json_data: dict[str, list[str]] = json.load(json_file)
@@ -283,16 +270,12 @@ class Handler:
             json.dump(json_data, json_file, indent=4)
 
     def _remove_dir_from_storage(self, dir: str, archive: bool = False) -> None:
-        """
-        This function removes a dir from the storage.json file.
+        """Unregister a directory from ``storage.json``.
 
         Args:
-            dir (str): The dir which should be removed from the storage.
-            archive (bool): Decides whether the archive storage
-            should be used or not. Defaults to False.
-
-        Returns:
-            None
+            dir (str): Directory path to remove.
+            archive (bool): Whether to remove the directory from the archive
+                registry.
         """
         with open(self.storage_path) as json_file:
             json_data: dict[str, list[str]] = json.load(json_file)
@@ -311,19 +294,15 @@ class Handler:
             json.dump(json_data, json_file, indent=4)
 
     def _detect_gap(self, table: str, archive: bool = False) -> int:
-        """
-        Find the first missing ID in the sequence of entries for a given table.
-        This ensures that new entries are inserted at the correct position without
-        leaving unused identifiers.
+        """Return the first free ID in a table.
 
         Args:
-            table (str): The name of the table which entry IDs should be examined.
-            archive (bool): This argument is used to decide if the archive db
-                should be used or not. Defaults to False.
+            table (str): Name of the table to scan.
+            archive (bool): Whether to query the archive database.
 
         Returns:
-            int: The next available ID. If no gaps exist, returns the next
-                consecutive ID after the highest one.
+            int: The lowest unused identifier. If no gaps exist, the next
+            consecutive identifier is returned.
         """
         if archive:
             self.cursor_archive.execute(f'SELECT * FROM "{table}"')
@@ -357,6 +336,7 @@ class Handler:
 
 
 def main() -> None:
+    """Run a small demonstration of the handler."""
     handler = Handler(".\\data\\demo.db", ".\\data\\demo_archive.db")
 
     handler.process_data(
