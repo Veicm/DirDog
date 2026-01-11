@@ -1,0 +1,5 @@
+{
+  "monitoring_dirs": ["C:\\path\\to\\dir", "C:\\path\\to\\dir_2"],
+  "auto_start": true,
+  "subprogram_watchdog": true
+}
