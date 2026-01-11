@@ -2,6 +2,8 @@
   <img src="https://github.com/Veicm/DirDog/blob/main/assets/logo.png?raw=true" alt="Logo" width=200px />
 </p>
 
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Veicm/DirDog)
+
 # DirDog
 
 DirDog is a Python-based directory watchdog for Windows systems.
