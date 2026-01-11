@@ -3,9 +3,9 @@
 </p>
 
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Veicm/DirDog)
-![GitHub Issues or Pull Requests](https://img.shields.io/github/issues-pr/Veicm/DirDog?style=flat&color=%231111ff&link=https%3A%2F%2Fgithub.com%2FVeicm%2FDirDog%2Fpulls)
-![GitHub Issues or Pull Requests](https://img.shields.io/github/issues/Veicm/DirDog?style=flat&color=%2300cc00&link=https%3A%2F%2Fgithub.com%2FVeicm%2FDirDog%2Fissues)
-![GitHub License](https://img.shields.io/github/license/Veicm/DirDog?style=flat&color=%23993d00&link=https%3A%2F%2Fgithub.com%2FVeicm%2FDirDog%3Ftab%3DApache-2.0-1-ov-file%23readme)
+[![GitHub Issues or Pull Requests](https://img.shields.io/github/issues-pr/Veicm/DirDog?style=flat&color=%231111ff&link=https%3A%2F%2Fgithub.com%2FVeicm%2FDirDog%2Fpulls)](https://github.com/Veicm/DirDog/pulls)
+[![GitHub Issues or Pull Requests](https://img.shields.io/github/issues/Veicm/DirDog?style=flat&color=%2300cc00&link=https%3A%2F%2Fgithub.com%2FVeicm%2FDirDog%2Fissues)](https://github.com/Veicm/DirDog/issues)
+[![GitHub License](https://img.shields.io/github/license/Veicm/DirDog?style=flat&color=%23993d00&link=https%3A%2F%2Fgithub.com%2FVeicm%2FDirDog%3Ftab%3DApache-2.0-1-ov-file%23readme)](https://github.com/Veicm/DirDog?tab=Apache-2.0-1-ov-file#readme)
 
 # DirDog
 
