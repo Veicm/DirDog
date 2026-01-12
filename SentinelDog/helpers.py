@@ -3,16 +3,17 @@ from pathlib import Path
 import json
 from multiprocessing.connection import Client
 from py_essentials import hashing as hs
-
+import threading
+json_lock = threading.Lock()
 with open('SentinelDog/check_changes_config.json', 'r', encoding='utf-8') as config_file:
     data = json.load(config_file)
-try:     
-    print("[+] Connection is prepared!")
-    address = ("localhost", 6000)
-    conn = Client(address, authkey=b"secret password")
-    print("[+] Connection succesfull!")    
-except:
-    print("[!] Error: Connecetion failed!")
+# try:     
+#     print("[+] Connection is prepared!")
+#     address = ("localhost", 6000)
+#     conn = Client(address, authkey=b"secret password")
+#     print("[+] Connection succesfull!")    
+# except:
+#     print("[!] Error: Connecetion failed!")
 
 def sha256_file(path):
 
@@ -26,14 +27,30 @@ def push_change_files_into_api(path,type_of_action,new_path=None):
     parent_dir = str(Path(path).parent)
     extension = str(Path(path).suffix)
     file_name = str(Path(path).stem)
-    # print("--------------------------------------------")
-    # print(data["path"])
-    # print("----")
-    # print(path)
+
+    try:
+        new_name = str(Path(new_path).stem)+str(Path(new_path).suffix)
+    except:
+
+        new_name = None
+        print("Error beim auswerten des neuen Pfades. (Normal bei 3/4 operationen)")
+    
+    
+    
+    print("--------------------------------------------")
+    print(data["path"])
+    print("----")
+    print(parent_dir)
 
 
-    # print("-------------------------------------------------")
-    if str(parent_dir) !=str(data["path"]):
+    print(str(Path(data["path"]).parent.resolve(strict=True)))
+    print("------")
+    print(Path(parent_dir).resolve(strict=True))
+    print(Path(data["path"]).resolve(strict=True))
+
+
+    print("-------------------------------------------------")
+    if Path(parent_dir).resolve(strict=True) !=Path(data["path"]).resolve(strict=True):
         print("Eintrag wurde übersprungen da die Datei in einem Unterordner liegt!")
         return
 
@@ -55,13 +72,24 @@ def push_change_files_into_api(path,type_of_action,new_path=None):
         "parent_dir": parent_dir,
         "file_name": file_name,
         "file_extension": extension,
-        "new_path": new_path,
+        "new_name": new_name,
         "last_modified": int(time.time()),
         "SHA-256-Hash": hashed_file,
         "action": type_of_action
 
 
     }
-    
-    conn.send(changed_file)
+    with json_lock:
+        with open(data["api_file_path"], "r+", encoding="utf-8") as api_file:
+            try:
+                file_data = json.load(api_file)
+            except json.JSONDecodeError:
+                file_data = {"files": []}
+
+            file_data.setdefault("files", []).append(changed_file)
+
+            api_file.seek(0)
+            json.dump(file_data, api_file, indent=2, ensure_ascii=False)
+            api_file.truncate()
+    # conn.send(changed_file)
     

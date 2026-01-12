@@ -18,7 +18,7 @@ class Handler(FileSystemEventHandler):
         self.lock = False
         super().__init__()
 
-    def on_moved(self, event):
+    def on_moved(self, event): # Triggers: whren renamed or moved
         self.lock = True
         print("Neuer Eintrag wird erstellt! ---------------------------")
         old_path = str(Path(event.src_path).resolve())
@@ -27,10 +27,10 @@ class Handler(FileSystemEventHandler):
         print("Umbenannt:")
         print("ALT:", old_path)
         print("NEU:", new_path)
-        push_change_files_into_api(str(Path(event.src_path).resolve()),"Renamed",str(Path(event.dest_path).resolve()))
+        push_change_files_into_api(str(Path(event.dest_path).resolve()),"Renamed")
 
 
-    def on_modified(self, event):
+    def on_modified(self, event): # Triggers if the file is changed or its content
         print("Neuer Eintrag wird erstellt! ---------------------------")
         if not self.lock:
             print("Geändert:", event.src_path)
@@ -39,13 +39,13 @@ class Handler(FileSystemEventHandler):
             self.lock = False
 
 
-    def on_created(self, event):
+    def on_created(self, event): # Triggers if a new file is created
         print("Neuer Eintrag wird erstellt! ---------------------------")
         print("Neu:", event.src_path)
         push_change_files_into_api(str(Path(event.src_path).resolve()),"Created")
 
 
-    def on_deleted(self, event):
+    def on_deleted(self, event): # Triggers if a file is deleted
         print("Neuer Eintrag wird erstellt! ---------------------------")
         print("Gelöscht:", event.src_path)
         push_change_files_into_api(str(Path(event.src_path).resolve()),"Deleted")
