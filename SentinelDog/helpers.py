@@ -1,10 +1,8 @@
 import time
 from pathlib import Path
 import json
-import hashlib
-import threading
 from multiprocessing.connection import Client
-
+from py_essentials import hashing as hs
 
 with open('SentinelDog/check_changes_config.json', 'r', encoding='utf-8') as config_file:
     data = json.load(config_file)
@@ -16,12 +14,10 @@ try:
 except:
     print("[!] Error: Connecetion failed!")
 
-def sha256_file(path, chunk_size=8192):
-    h = hashlib.sha256()
-    with open(path, "rb") as f:
-        for chunk in iter(lambda: f.read(chunk_size), b""):
-            h.update(chunk)
-    return h.hexdigest()
+def sha256_file(path):
+
+    hash = hs.fileChecksum(path, "sha256")
+    return  str(hash)
 
 
 def push_change_files_into_api(path,type_of_action,new_path=None):
