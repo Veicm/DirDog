@@ -3,10 +3,18 @@ from pathlib import Path
 import json
 import hashlib
 import threading
-json_lock = threading.Lock()
+from multiprocessing.connection import Client
+
 
 with open('SentinelDog/check_changes_config.json', 'r', encoding='utf-8') as config_file:
     data = json.load(config_file)
+try:     
+    print("[+] Connection is prepared!")
+    address = ("localhost", 6000)
+    conn = Client(address, authkey=b"secret password")
+    print("[+] Connection succesfull!")    
+except:
+    print("[!] Error: Connecetion failed!")
 
 def sha256_file(path, chunk_size=8192):
     h = hashlib.sha256()
@@ -18,7 +26,7 @@ def sha256_file(path, chunk_size=8192):
 
 def push_change_files_into_api(path,type_of_action,new_path=None):
     global data
-
+    global conn
     parent_dir = str(Path(path).parent)
     extension = str(Path(path).suffix)
     file_name = str(Path(path).stem)
@@ -58,15 +66,6 @@ def push_change_files_into_api(path,type_of_action,new_path=None):
 
 
     }
-    with json_lock:
-        with open(data["api_file_path"], "r+", encoding="utf-8") as api_file:
-            try:
-                file_data = json.load(api_file)
-            except json.JSONDecodeError:
-                file_data = {"files": []}
-
-            file_data.setdefault("files", []).append(changed_file)
-
-            api_file.seek(0)
-            json.dump(file_data, api_file, indent=2, ensure_ascii=False)
-            api_file.truncate()
+    
+    conn.send(changed_file)
+    
