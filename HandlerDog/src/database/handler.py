@@ -18,7 +18,9 @@ class Handler:
         self.connection_archive: sqlite3.Connection = sqlite3.connect(archive_path)
         self.cursor_archive: sqlite3.Cursor = self.connection_archive.cursor()
 
-        self.storage_path: str = ".\\data\\storage.json"  # TODO: Change path maybe
+        self.storage_path: str = (
+            ".\\database\\data\\storage.json"  # TODO: Change path maybe
+        )
 
     def process_data(self, data: dict[str, str | int | None]) -> None:
         """Dispatch a file action to the corresponding handler.
@@ -168,6 +170,8 @@ class Handler:
             data (dict[str, str | int | None]): File metadata as defined in
                 ``api.json``.
         """
+        print("delete was triggered")
+        print(data)
         parent_dir: str | int | None = data.get("parent_dir")
         if not isinstance(parent_dir, str):
             raise ValueError(f"{parent_dir} is not a valid value of 'parent_dir'.")
@@ -176,8 +180,8 @@ class Handler:
         entries: list[tuple[int, str, str, int, str]] = self.cursor_db.fetchall()
 
         for entry in entries:
-            if entry[1] == data.get("file_name") and entry[4] == data.get(
-                "SHA-256-Hash"
+            if entry[1] == data.get("file_name") and entry[2] == data.get(
+                "file_extension"
             ):
                 # Prepare archive
                 if self._is_new_dir(parent_dir, True):
