@@ -6,15 +6,16 @@ import threading
 from multiprocessing.connection import Client
 
 
-with open('SentinelDog/check_changes_config.json', 'r', encoding='utf-8') as config_file:
+with open("./check_changes_config.json", "r", encoding="utf-8") as config_file:
     data = json.load(config_file)
-try:     
+try:
     print("[+] Connection is prepared!")
     address = ("localhost", 6000)
     conn = Client(address, authkey=b"secret password")
-    print("[+] Connection succesfull!")    
+    print("[+] Connection succesfull!")
 except:
     print("[!] Error: Connecetion failed!")
+
 
 def sha256_file(path, chunk_size=8192):
     h = hashlib.sha256()
@@ -24,7 +25,7 @@ def sha256_file(path, chunk_size=8192):
     return h.hexdigest()
 
 
-def push_change_files_into_api(path,type_of_action,new_path=None):
+def push_change_files_into_api(path, type_of_action, new_path=None):
     global data
     global conn
     parent_dir = str(Path(path).parent)
@@ -35,9 +36,8 @@ def push_change_files_into_api(path,type_of_action,new_path=None):
     # print("----")
     # print(path)
 
-
     # print("-------------------------------------------------")
-    if str(parent_dir) !=str(data["path"]):
+    if str(parent_dir) != str(data["path"]):
         print("Eintrag wurde übersprungen da die Datei in einem Unterordner liegt!")
         return
 
@@ -45,7 +45,7 @@ def push_change_files_into_api(path,type_of_action,new_path=None):
         hashed_file = None
     else:
         try:
-            hashed_file = str(sha256_file(new_path if new_path else path))    
+            hashed_file = str(sha256_file(new_path if new_path else path))
         except (FileNotFoundError, PermissionError):
             hashed_file = None
             print("Eintrag wurde übersprungen da ein Ordner betroffen war !")
@@ -62,10 +62,7 @@ def push_change_files_into_api(path,type_of_action,new_path=None):
         "new_path": new_path,
         "last_modified": int(time.time()),
         "SHA-256-Hash": hashed_file,
-        "action": type_of_action
-
-
+        "action": type_of_action,
     }
-    
+
     conn.send(changed_file)
-    

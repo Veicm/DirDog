@@ -2,10 +2,11 @@ from watchdog.observers import Observer
 import json
 import threading
 from Handler_class import Handler
+
 json_lock = threading.Lock()
 
 
-with open('SentinelDog/check_changes_config.json', 'r', encoding='utf-8') as config_file:
+with open("./check_changes_config.json", "r", encoding="utf-8") as config_file:
     data = json.load(config_file)
 
 
