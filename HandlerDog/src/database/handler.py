@@ -60,7 +60,9 @@ class Handler:
         self.cursor_db.execute(f'SELECT * FROM "{parent_dir}"')
         entries: list[tuple[int, str, str, int, str]] = self.cursor_db.fetchall()
         for entry in entries:
-            if entry[4] == data.get("SHA-256-Hash"):
+            if entry[4] == data.get("SHA-256-Hash") and entry[1] == data.get(
+                "file_name"
+            ):
 
                 updated_entry: tuple[
                     int,
@@ -70,8 +72,8 @@ class Handler:
                     str | int | None,
                 ] = (
                     entry[0],
-                    data.get("file_name"),
-                    data.get("file_extension"),
+                    data.get("new_name"),
+                    data.get("new_file_extension"),
                     data.get("last_modified"),
                     data.get("SHA-256-Hash"),
                 )
