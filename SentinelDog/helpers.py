@@ -30,6 +30,7 @@ def push_change_files_into_api(path,type_of_action,new_path=None):
 
     try:
         new_name = str(Path(new_path).stem)+str(Path(new_path).suffix)
+        new_file_extension = str(Path(new_path).suffix)
     except:
 
         new_name = None
@@ -73,6 +74,7 @@ def push_change_files_into_api(path,type_of_action,new_path=None):
         "file_name": file_name,
         "file_extension": extension,
         "new_name": new_name,
+        "new_file_extension":new_file_extension,
         "last_modified": int(time.time()),
         "SHA-256-Hash": hashed_file,
         "action": type_of_action
