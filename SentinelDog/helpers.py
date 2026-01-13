@@ -34,7 +34,7 @@ def push_change_files_into_api(path, type_of_action, new_path=None):
         new_name = str(Path(new_path).stem) + str(Path(new_path).suffix)
         new_file_extension = str(Path(new_path).suffix)
     except:
-
+        new_file_extension = None
         new_name = None
         print("Error beim auswerten des neuen Pfades. (Normal bei 3/4 operationen)")
 
