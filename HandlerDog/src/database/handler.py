@@ -54,7 +54,6 @@ class Handler:
             data (dict[str, str | int | None]): File metadata as defined in
                 ``api.json``.
         """
-        print(data)
         parent_dir: str | int | None = data.get("parent_dir")
         if not isinstance(parent_dir, str):
             raise ValueError(f"{parent_dir} is not a valid value of 'parent_dir'.")
@@ -142,7 +141,6 @@ class Handler:
             data (dict[str, str | int | None]): File metadata as defined in
                 ``api.json``.
         """
-        print(data)
         parent_dir: str | int | None = data.get("parent_dir")
         if not isinstance(parent_dir, str):
             raise ValueError(f"{parent_dir} is not a valid value of 'parent_dir'.")
@@ -174,7 +172,6 @@ class Handler:
             data (dict[str, str | int | None]): File metadata as defined in
                 ``api.json``.
         """
-        print(data)
         parent_dir: str | int | None = data.get("parent_dir")
         if not isinstance(parent_dir, str):
             raise ValueError(f"{parent_dir} is not a valid value of 'parent_dir'.")
