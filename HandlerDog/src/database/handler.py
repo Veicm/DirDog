@@ -18,7 +18,9 @@ class Handler:
         self.connection_archive: sqlite3.Connection = sqlite3.connect(archive_path)
         self.cursor_archive: sqlite3.Cursor = self.connection_archive.cursor()
 
-        self.storage_path: str = ".\\data\\storage.json"  # TODO: Change path maybe
+        self.storage_path: str = (
+            ".\\database\\data\\storage.json"  # TODO: Change path maybe
+        )
 
     def process_data(self, data: dict[str, str | int | None]) -> None:
         """Dispatch a file action to the corresponding handler.
@@ -58,7 +60,9 @@ class Handler:
         self.cursor_db.execute(f'SELECT * FROM "{parent_dir}"')
         entries: list[tuple[int, str, str, int, str]] = self.cursor_db.fetchall()
         for entry in entries:
-            if entry[4] == data.get("SHA-256-Hash"):
+            if entry[4] == data.get("SHA-256-Hash") and entry[1] == data.get(
+                "file_name"
+            ):
 
                 updated_entry: tuple[
                     int,
@@ -68,8 +72,8 @@ class Handler:
                     str | int | None,
                 ] = (
                     entry[0],
-                    data.get("file_name"),
-                    data.get("file_extension"),
+                    data.get("new_name"),
+                    data.get("new_file_extension"),
                     data.get("last_modified"),
                     data.get("SHA-256-Hash"),
                 )
@@ -176,8 +180,8 @@ class Handler:
         entries: list[tuple[int, str, str, int, str]] = self.cursor_db.fetchall()
 
         for entry in entries:
-            if entry[1] == data.get("file_name") and entry[4] == data.get(
-                "SHA-256-Hash"
+            if entry[1] == data.get("file_name") and entry[2] == data.get(
+                "file_extension"
             ):
                 # Prepare archive
                 if self._is_new_dir(parent_dir, True):

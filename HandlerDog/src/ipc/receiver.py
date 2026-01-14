@@ -27,27 +27,17 @@ class IPC:
         listener are shut down.
         """
         while True:
-            data_query: list[dict[str, str | int | None]] | str = self.connection.recv()
-            if data_query == "close":
+            data: dict[str, str | int | None] | str = self.connection.recv()
+            if data == "close":
                 self.connection.close()
                 break
-            elif not isinstance(data_query, str):
-                self.handle_data(data_query)
+            elif not isinstance(data, str):
+                self.handler.process_data(data)
             else:
                 raise ValueError(
-                    f"{data_query} of type {type(data_query)} is not a valid content type for data_query."
+                    f"{data} of type {type(data)} is not a valid content type for data_query."
                 )
         self.listener.close()
-
-    def handle_data(self, data_query: list[dict[str, str | int | None]]) -> None:
-        """Process a batch of file event dictionaries.
-
-        Args:
-            data_query (list[dict[str, str | int | None]]): A list of file event
-                payloads that are forwarded to the handler.
-        """
-        for data in data_query:
-            self.handler.process_data(data)
 
 
 def main() -> None:
