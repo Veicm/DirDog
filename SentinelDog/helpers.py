@@ -31,7 +31,7 @@ def push_change_files_into_api(path, type_of_action, new_path=None):
     file_name = str(Path(path).stem)
 
     try:
-        new_name = str(Path(new_path).stem) + str(Path(new_path).suffix)
+        new_name = str(Path(new_path).stem) 
         new_file_extension = str(Path(new_path).suffix)
     except:
         new_file_extension = None
