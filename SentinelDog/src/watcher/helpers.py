@@ -1,21 +1,15 @@
 import time
 from pathlib import Path
 import json
-from multiprocessing.connection import Client
+from ipc.ipc import connect_to_host,send_data
 from py_essentials import hashing as hs
 import threading
 
 json_lock = threading.Lock()
 with open("./check_changes_config.json", "r", encoding="utf-8") as config_file:
     data = json.load(config_file)
-try:
-    print("[+] Connection is prepared!")
-    address = ("localhost", 6000)
-    conn = Client(address, authkey=b"secret password")
-    print("[+] Connection succesfull!")
-except:
-    print("[!] Error: Connecetion failed!")
 
+conn=connect_to_host()
 
 def sha256_file(path):
 
@@ -77,4 +71,4 @@ def push_change_files_into_api(path, type_of_action, new_path=None):
         "SHA-256-Hash": hashed_file,
         "action": type_of_action,
     }
-    conn.send(changed_file)
+    send_data(conn=conn,data=changed_file)
