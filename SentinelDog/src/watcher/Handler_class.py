@@ -1,6 +1,6 @@
 from pathlib import Path
 import threading
-from helpers import *
+from watcher.helpers import *
 from watchdog.events import FileSystemEventHandler
 json_lock = threading.Lock()
 

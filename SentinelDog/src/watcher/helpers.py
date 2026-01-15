@@ -6,7 +6,7 @@ from py_essentials import hashing as hs
 import threading
 
 json_lock = threading.Lock()
-with open("./check_changes_config.json", "r", encoding="utf-8") as config_file:
+with open("config/check_changes_config.json", "r", encoding="utf-8") as config_file:
     data = json.load(config_file)
 
 conn=connect_to_host()
