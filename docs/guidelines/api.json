@@ -1,42 +1,44 @@
 {
   "files": [
-        
     {
       "parent_dir": "C:\\path\\to\\dir",
-      "file_name": "test.txt",
+      "file_name": "test",
       "file_extension": ".txt",
-      "new_path": null,
-      "last_modified": 1765648720,
+      "new_name": "hello_world",
+      "new_file_extension": ".md",
+      "last_modified": 1765648720, // Unix time
       "SHA-256-Hash": "4575862a78a4b7e6d382c58664b8e67c144b5cac753d78c29a811778dcd68199",
-      "action": "Changed" 
+      "action": "Renamed"
     },
     {
       "parent_dir": "C:\\path\\to\\dir",
-      "file_name": "test_2.txt",
+      "file_name": "test",
       "file_extension": ".txt",
-      "new_path": null,
-      "last_modified": 1765648720,
+      "new_name": null,
+      "new_file_extension": null,
+      "last_modified": 1765648720, // Unix time
+      "SHA-256-Hash": "4575862a78a4b7e6d382c58664b8e67c144b5cac753d78c29a811778dcd68199",
+      "action": "Changed"
+    },
+    {
+      "parent_dir": "C:\\path\\to\\dir",
+      "file_name": "test",
+      "file_extension": ".txt",
+      "new_name": null,
+      "new_file_extension": null,
+      "last_modified": 1765648720, // Unix time
       "SHA-256-Hash": "4575862a78a4b7e6d382c58664b8e67c144b5cac753d78c29a811778dcd68199",
       "action": "Created"
     },
     {
       "parent_dir": "C:\\path\\to\\dir",
-      "file_name": "test_3.txt",
+      "file_name": "test.txt",
       "file_extension": ".txt",
-      "new_path": null,
-      "last_modified": 1765648720,
-      "SHA-256-Hash": "4575862a78a4b7e6d382c58664b8e67c144b5cac753d78c29a811778dcd68199",
+      "new_name": null,
+      "new_file_extension": null,
+      "last_modified": 1765648720, // Unix time
+      "SHA-256-Hash": null,
       "action": "Deleted"
-    },
-    {
-      "parent_dir": "B:\\path\\to\\dir",
-      "file_name": "test_4",
-      "file_extension": ".txt",
-      "new_name": "test_92.txt",
-      "last_modified": 1768245959,
-      "SHA-256-Hash": "0548a226d485d7dd56b335cb39c87224e2614582103aa5b8d2e377079f9589e2",
-      "action": "Renamed"
     }
   ]
-  
 }
