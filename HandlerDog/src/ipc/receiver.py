@@ -1,4 +1,5 @@
 from multiprocessing.connection import Connection, Listener
+from threading import Thread
 from typing import Any
 from database.handler import Handler
 
@@ -16,28 +17,41 @@ class IPC:
         self.handler = Handler(db_path, archive_path)
         self.address = ("localhost", 6000)
         self.listener = Listener(self.address, authkey=b"secret password")
-        self.connection: Connection[Any, Any] = self.listener.accept()
-        print("connection accepted from", self.listener.last_accepted)
 
-    def receive(self) -> None:
+    def receive(self, connection: Connection[Any, Any]) -> None:
         """Continuously receive and process incoming IPC messages.
 
         The method blocks on the connection and processes received data until a
         ``"close"`` message is received, at which point the connection and
         listener are shut down.
+
+        Args:
+            connection (Connection[Any, Any]): The connection, to use in this function.
         """
         while True:
-            data: dict[str, str | int | None] | str = self.connection.recv()
-            if data == "close":
-                self.connection.close()
+            try:
+                data: dict[str, str | int | None] | str = connection.recv()
+            except EOFError:
                 break
+
+            if data == "close":
+                break
+
             elif not isinstance(data, str):
                 self.handler.process_data(data)
+
             else:
                 raise ValueError(
                     f"{data} of type {type(data)} is not a valid content type for data_query."
                 )
-        self.listener.close()
+        connection.close()
+
+    def run_threading(self) -> None:
+        """receive data on multiple threads."""
+        while True:
+            connection: Connection[Any, Any] = self.listener.accept()
+            thread = Thread(target=self.receive, args=(connection,), daemon=True)
+            thread.start()
 
 
 def main() -> None:
@@ -45,7 +59,7 @@ def main() -> None:
     ipc = IPC(
         ".\\..\\database\\data\\demo.db", ".\\..\\database\\data\\demo_archive.db"
     )
-    ipc.receive()
+    ipc.run_threading()
 
 
 if __name__ == "__main__":
