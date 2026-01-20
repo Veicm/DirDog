@@ -33,17 +33,17 @@ def push_change_files_into_api(path, type_of_action, new_path=None):
         print("Error beim auswerten des neuen Pfades. (Normal bei 3/4 operationen)")
 
     print("--------------------------------------------")
-    print(data["path"])
+    print(path)
     print("----")
     print(parent_dir)
 
-    print(str(Path(data["path"]).parent.resolve(strict=True)))
+    print(str(Path(path).parent.resolve(strict=True)))
     print("------")
     print(Path(parent_dir).resolve(strict=True))
-    print(Path(data["path"]).resolve(strict=True))
+    print(Path(path).resolve(strict=True))
 
     print("-------------------------------------------------")
-    if Path(parent_dir).resolve(strict=True) != Path(data["path"]).resolve(strict=True):
+    if Path(parent_dir).resolve(strict=True) != Path(path).resolve(strict=True):
         print("Eintrag wurde übersprungen da die Datei in einem Unterordner liegt!")
         return
 

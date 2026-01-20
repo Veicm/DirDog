@@ -14,8 +14,9 @@ json_lock = threading.Lock()
 #   |
 #   |  Fixxed/Implemented all
 class Handler(FileSystemEventHandler):
-    def __init__(self):
+    def __init__(self, path):
         self.lock = False
+        self.path = path
         super().__init__()
 
     def on_moved(self, event):

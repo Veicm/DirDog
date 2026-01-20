@@ -62,7 +62,7 @@ class DashboardPage(QWidget):
 
         # --- Controller connection ---
         controller.pie_data_updated.connect(self.pie_chart.update_data)
-
+        
     # =====================
     # === DATA INTERFACES ===
     # =====================
