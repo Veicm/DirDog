@@ -18,7 +18,7 @@ class IPC:
         self.address = ("localhost", 6000)
         self.listener = Listener(self.address, authkey=b"secret password")
 
-    def receive(self, connection: Connection[Any, Any]) -> None:
+    def receive(self, connection) -> None:
         """Continuously receive and process incoming IPC messages.
 
         The method blocks on the connection and processes received data until a
