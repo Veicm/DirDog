@@ -13,9 +13,9 @@ def sha256_file(path):
     return str(hash)
 
 
-def push_change_files_into_api(path, type_of_action, new_path=None):
-    global data
-    global conn
+def push_change_files_into_api(connection,path, type_of_action, new_path=None):
+
+
     parent_dir = str(Path(path).parent)
     extension = str(Path(path).suffix)
     file_name = str(Path(path).stem)
@@ -67,4 +67,4 @@ def push_change_files_into_api(path, type_of_action, new_path=None):
         "SHA-256-Hash": hashed_file,
         "action": type_of_action,
     }
-    send_data(conn=conn,data=changed_file)
+    send_data(conn=connection,data=changed_file)

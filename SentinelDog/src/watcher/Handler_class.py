@@ -14,9 +14,10 @@ json_lock = threading.Lock()
 #   |
 #   |  Fixxed/Implemented all
 class Handler(FileSystemEventHandler):
-    def __init__(self, path):
+    def __init__(self, path,connection):
         self.lock = False
         self.path = path
+        self.conn=connection
         super().__init__()
 
     def on_moved(self, event):
@@ -28,14 +29,14 @@ class Handler(FileSystemEventHandler):
         print("Umbenannt:")
         print("ALT:", old_path)
         print("NEU:", new_path)
-        push_change_files_into_api(str(Path(event.src_path).resolve()),"Renamed",str(Path(event.dest_path).resolve()))
+        push_change_files_into_api(str(Path(event.src_path).resolve()),"Renamed",str(Path(event.dest_path).resolve()), connection=self.conn)
 
 
     def on_modified(self, event):
         print("Neuer Eintrag wird erstellt! ---------------------------")
         if not self.lock:
             print("Geändert:", event.src_path)
-            push_change_files_into_api(str(Path(event.src_path).resolve()),"Changed")
+            push_change_files_into_api(str(Path(event.src_path).resolve()),"Changed", connection=self.conn)
         else:
             self.lock = False
 
@@ -43,10 +44,10 @@ class Handler(FileSystemEventHandler):
     def on_created(self, event):
         print("Neuer Eintrag wird erstellt! ---------------------------")
         print("Neu:", event.src_path)
-        push_change_files_into_api(str(Path(event.src_path).resolve()),"Created")
+        push_change_files_into_api(str(Path(event.src_path).resolve()),"Created", connection=self.conn)
 
 
     def on_deleted(self, event):
         print("Neuer Eintrag wird erstellt! ---------------------------")
         print("Gelöscht:", event.src_path)
-        push_change_files_into_api(str(Path(event.src_path).resolve()),"Deleted")
+        push_change_files_into_api(str(Path(event.src_path).resolve()),"Deleted", connection=self.conn)
