@@ -13,8 +13,7 @@ def main() -> None:
     with ThreadPoolExecutor(max_workers=len(paths)) as executor:
         executor.map(single_main, paths)
 
-    while True:
-        pass
+    executor.shutdown(wait=True)
 
 
 if __name__ == "__main__":

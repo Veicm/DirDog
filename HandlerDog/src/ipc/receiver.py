@@ -17,7 +17,6 @@ class IPC:
         self.handler = Handler(db_path, archive_path)
         self.address = ("localhost", 6000)
         self.listener = Listener(self.address, authkey=b"secret password")
-        print("connection successfull")
 
     def receive(self, connection) -> None:
         """Continuously receive and process incoming IPC messages.
@@ -51,6 +50,7 @@ class IPC:
         """receive data on multiple threads."""
         while True:
             connection: Connection[Any, Any] = self.listener.accept()
+            print("connection successfull")
             thread = Thread(target=self.receive, args=(connection,), daemon=True)
             thread.start()
 
