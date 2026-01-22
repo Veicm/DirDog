@@ -34,6 +34,12 @@ class PathListWidget(QWidget):
         self.browse_btn.clicked.connect(self.browse_path)
         self.remove_btn.clicked.connect(self.remove_selected)
 
+        self.config_path = Path(
+                ".\\data\\data_storage.json"
+            )
+
+        self.load_paths_into_GUI()
+
 
 
 
@@ -48,7 +54,17 @@ class PathListWidget(QWidget):
             json.dump(data, json_file, indent=4, sort_keys=True, ensure_ascii=False)
         
 
+    def load_paths_into_GUI(self):
 
+        with self.config_path.open("r",encoding="utf-8") as file:
+            data = json.load(file)
+        
+        for path in data["monitoring_dirs"]:
+            if path is None:
+                path = self.path_input.text()
+            if path:
+                self.path_list.addItem(path)
+        
 
     # === DATA INTERFACE ===
     def add_path_to_GUI(self, path: str = None):
@@ -61,10 +77,7 @@ class PathListWidget(QWidget):
 
     def remove_selected(self):
         """Remove selected paths"""
-        config_path = Path(
-                "..\\data\\data_storage.json"
-            )
-        with config_path.open("r",encoding="utf-8") as file:
+        with self.config_path.open("r",encoding="utf-8") as file:
             data = json.load(file)
 
         
@@ -80,7 +93,7 @@ class PathListWidget(QWidget):
                 if str(Path(p).resolve()) != str(Path(path).resolve())
             ]
             
-        with config_path.open("w",encoding="utf-8") as file:
+        with self.config_path.open("w",encoding="utf-8") as file:
             json.dump(data,file, indent=2,ensure_ascii=False)
 
 

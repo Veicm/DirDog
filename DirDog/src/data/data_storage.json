@@ -1,5 +1,5 @@
 {
   "auto_start": true,
-  "monitoring_dirs": ["C:\\Users\\veicm\\Documents\\test_dir"],
+  "monitoring_dirs": [],
   "subprogram_watchdog": true
 }
