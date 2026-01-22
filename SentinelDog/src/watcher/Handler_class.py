@@ -33,7 +33,9 @@ class Handler(FileSystemEventHandler):
         push_change_files_into_api(
             path=str(Path(event.src_path).resolve()),
             type_of_action="Renamed",
-            connection=self.conn
+            connection=self.conn,
+            new_path=new_path,
+            checked_path = self.path
         )
 
     def on_modified(self, event):
@@ -44,7 +46,8 @@ class Handler(FileSystemEventHandler):
             push_change_files_into_api(
             path=str(Path(event.src_path).resolve()),
             type_of_action="Changed",
-            connection=self.conn
+            connection=self.conn,
+            checked_path = self.path
         )
 
         else:
@@ -57,7 +60,8 @@ class Handler(FileSystemEventHandler):
         push_change_files_into_api(
             path=str(Path(event.src_path).resolve()),
             type_of_action="Created",
-            connection=self.conn
+            connection=self.conn,
+            checked_path = self.path
         )
 
 
@@ -69,5 +73,6 @@ class Handler(FileSystemEventHandler):
         push_change_files_into_api(
             path=str(Path(event.src_path).resolve()),
             type_of_action="Deleted",
-            connection=self.conn
+            connection=self.conn,
+            checked_path = self.path
         )

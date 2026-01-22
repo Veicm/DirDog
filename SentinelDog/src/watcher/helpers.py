@@ -13,7 +13,7 @@ def sha256_file(path):
     return str(hash)
 
 
-def push_change_files_into_api(connection,path, type_of_action, new_path=None):
+def push_change_files_into_api(connection,path, type_of_action, checked_path,new_path=None):
 
 
     parent_dir = str(Path(path).parent)
@@ -26,20 +26,15 @@ def push_change_files_into_api(connection,path, type_of_action, new_path=None):
     except:
         new_file_extension = None
         new_name = None
-        print("Error beim auswerten des neuen Pfades. (Normal bei 3/4 operationen)")
+        print("Error beim auswerten des neuen Pfades. Nur relevant beim umbennen!!")
 
     print("--------------------------------------------")
-    print(path)
-    print("----")
-    print(parent_dir)
 
-    print(str(Path(path).parent.resolve(strict=True)))
-    print("------")
-    print(Path(parent_dir).resolve(strict=True))
-    print(Path(path).resolve(strict=True))
+    print(f"New path: {str(Path(parent_dir).resolve())}")
+    print(f"Old Path: {str(Path(path).resolve())}")
 
     print("-------------------------------------------------")
-    if Path(parent_dir).resolve(strict=True) != Path(path).resolve(strict=True):
+    if str(Path(parent_dir).resolve()) != str(Path(checked_path).resolve()):
         print("Eintrag wurde übersprungen da die Datei in einem Unterordner liegt!")
         return
 

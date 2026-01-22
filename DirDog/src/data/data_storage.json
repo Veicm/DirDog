@@ -1,7 +1,8 @@
 {
     "auto_start": true,
     "monitoring_dirs": [
-        "B:\\Coden\\Schule\\Archivierung_tool\\checked_folder"
+        "B:\\Coden\\Schule\\Archivierung_tool\\checked_folder",
+        "B:\\Coden\\Schule\\Archivierung_tool\\checked_foler2"
     ],
     "subprogram_watchdog": true
 }
