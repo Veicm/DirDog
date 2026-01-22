@@ -3,7 +3,7 @@ from PySide6.QtWidgets import (
     QLabel, QFrame, QSizePolicy
 )
 from PySide6.QtCore import Qt
-from data_controller.controller import DataController
+from frontend.data_controller.controller import DataController
 from .widgets.header import HeaderWidget
 from .widgets.footer import FooterWidget
 from .widgets.pi_chart import PieChartWidget
@@ -87,7 +87,7 @@ class DashboardPage(QWidget):
     # --- PathList interface ---
     def add_path(self, path: str):
         """Add a new path to the PathList widget"""
-        self.path_widget.add_path(path)
+        self.path_widget.add_path_to_GUI(path)
 
     def get_paths(self) -> list[str]:
         """Get all paths from PathList widget"""

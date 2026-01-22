@@ -1,4 +1,4 @@
-from data_controller.controller import DataController
+from frontend.data_controller.controller import DataController
 from .dashboard import DashboardPage
 
 from PySide6.QtWidgets import QMainWindow

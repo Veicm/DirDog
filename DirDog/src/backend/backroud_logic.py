@@ -48,7 +48,7 @@ class LogicHandler:
             raise RuntimeError("No tables with column 'file_extension' found.")
 
         union_sql = " UNION ALL ".join(
-            f"SELECT file_extension FROM {table}" for table in tables
+            f"SELECT file_extension FROM '{table}'" for table in tables
         )
 
         self.cursor_db.execute(union_sql)

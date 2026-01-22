@@ -1,5 +1,8 @@
 {
-  "monitoring_dirs": ["C:\\path\\to\\dir", "C:\\path\\to\\dir_2"],
-  "auto_start": true,
-  "subprogram_watchdog": true
+    "auto_start": true,
+    "monitoring_dirs": [
+        "\\\\ths-sl29.schulpnbrg.intranet\\thslucnei\\Dokumente\\dir_archive\\checked_folder",
+        "\\\\ths-sl29.schulpnbrg.intranet\\thslucnei\\Dokumente\\dir_archive\\checked_folder2"
+    ],
+    "subprogram_watchdog": true
 }

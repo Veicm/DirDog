@@ -2,7 +2,8 @@ from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout,
     QLineEdit, QPushButton, QListWidget, QFileDialog
 )
-
+import json
+from pathlib import Path
 class PathListWidget(QWidget):
     def __init__(self):
         super().__init__()
@@ -33,25 +34,63 @@ class PathListWidget(QWidget):
         self.browse_btn.clicked.connect(self.browse_path)
         self.remove_btn.clicked.connect(self.remove_selected)
 
+
+
+
+    def add_selected_to_json(self,input: str) -> None:
+        with open(".\\data\\data_storage.json","r") as file:
+            data: dict[str,bool | list[str]] = json.load(file)
+        
+
+        data["monitoring_dirs"].append(input)
+
+        with open(".\\data\\data_storage.json", "w", encoding="utf-8") as json_file:
+            json.dump(data, json_file, indent=4, sort_keys=True, ensure_ascii=False)
+        
+
+
+
     # === DATA INTERFACE ===
-    def add_path(self, path: str = None):
+    def add_path_to_GUI(self, path: str = None):
         """Add a new path, either from parameter or input field"""
         if path is None:
             path = self.path_input.text()
         if path:
             self.path_list.addItem(path)
-            self.path_input.clear()
+            self.add_selected_to_json(str(Path(path).resolve()))
 
     def remove_selected(self):
         """Remove selected paths"""
+        config_path = Path(
+                "..\\data\\data_storage.json"
+            )
+        with config_path.open("r",encoding="utf-8") as file:
+            data = json.load(file)
+
+        
         for item in self.path_list.selectedItems():
+            path = item.text()
+            
+            
             self.path_list.takeItem(self.path_list.row(item))
+            
+
+            data["monitoring_dirs"] = [
+                p for p in data["monitoring_dirs"]
+                if str(Path(p).resolve()) != str(Path(path).resolve())
+            ]
+            
+        with config_path.open("w",encoding="utf-8") as file:
+            json.dump(data,file, indent=2,ensure_ascii=False)
+
+
+
 
     def browse_path(self):
         """Open a file/folder dialog and add the selected path"""
         path = QFileDialog.getExistingDirectory(self, "Select Folder")
         if path:
-            self.add_path(path)
+            self.add_path_to_GUI(path)
 
     # === DATA INTERFACE ===
     def get_paths(self) -> list[str]:
