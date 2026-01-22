@@ -29,14 +29,24 @@ class Handler(FileSystemEventHandler):
         print("Umbenannt:")
         print("ALT:", old_path)
         print("NEU:", new_path)
-        push_change_files_into_api(str(Path(event.src_path).resolve()),"Renamed",str(Path(event.dest_path).resolve()), connection=self.conn)
 
+        push_change_files_into_api(
+            path=str(Path(event.src_path).resolve()),
+            type_of_action="Renamed",
+            connection=self.conn
+        )
 
     def on_modified(self, event):
         print("Neuer Eintrag wird erstellt! ---------------------------")
         if not self.lock:
             print("Geändert:", event.src_path)
-            push_change_files_into_api(str(Path(event.src_path).resolve()),"Changed", connection=self.conn)
+
+            push_change_files_into_api(
+            path=str(Path(event.src_path).resolve()),
+            type_of_action="Changed",
+            connection=self.conn
+        )
+
         else:
             self.lock = False
 
@@ -55,4 +65,9 @@ class Handler(FileSystemEventHandler):
     def on_deleted(self, event):
         print("Neuer Eintrag wird erstellt! ---------------------------")
         print("Gelöscht:", event.src_path)
-        push_change_files_into_api(str(Path(event.src_path).resolve()),"Deleted", connection=self.conn)
+
+        push_change_files_into_api(
+            path=str(Path(event.src_path).resolve()),
+            type_of_action="Deleted",
+            connection=self.conn
+        )
