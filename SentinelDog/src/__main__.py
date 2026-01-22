@@ -11,9 +11,10 @@ def main() -> None:
     paths = data["monitoring_dirs"]
 
     with ThreadPoolExecutor(max_workers=len(paths)) as executor:
-        executor.map(single_main, paths)
+        futures = [executor.submit(single_main, path) for path in paths]
+        for f in futures:
+            f.result()   # blockiert dauerhaft
 
-    executor.shutdown(wait=True)
 
 
 if __name__ == "__main__":

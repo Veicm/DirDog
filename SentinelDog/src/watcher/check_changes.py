@@ -14,7 +14,7 @@ def main(path):
 
     conn = connect_to_host()
     observer = Observer()
-    observer.schedule(Handler(connection=conn), path=path, recursive=True)
+    observer.schedule(Handler(connection=conn,path=path), path=path, recursive=True)
     observer.start()
 
     try:

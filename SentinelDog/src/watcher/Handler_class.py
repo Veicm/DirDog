@@ -44,7 +44,12 @@ class Handler(FileSystemEventHandler):
     def on_created(self, event):
         print("Neuer Eintrag wird erstellt! ---------------------------")
         print("Neu:", event.src_path)
-        push_change_files_into_api(str(Path(event.src_path).resolve()),"Created", connection=self.conn)
+        push_change_files_into_api(
+            path=str(Path(event.src_path).resolve()),
+            type_of_action="Created",
+            connection=self.conn
+        )
+
 
 
     def on_deleted(self, event):
