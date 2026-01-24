@@ -12,10 +12,14 @@ class Handler:
             db_path (str): Path to the main SQLite database.
             archive_path (str): Path to the archive SQLite database.
         """
-        self.connection_db: sqlite3.Connection = sqlite3.connect(db_path)
+        self.connection_db: sqlite3.Connection = sqlite3.connect(
+            db_path, check_same_thread=False
+        )
         self.cursor_db: sqlite3.Cursor = self.connection_db.cursor()
 
-        self.connection_archive: sqlite3.Connection = sqlite3.connect(archive_path)
+        self.connection_archive: sqlite3.Connection = sqlite3.connect(
+            archive_path, check_same_thread=False
+        )
         self.cursor_archive: sqlite3.Cursor = self.connection_archive.cursor()
 
         self.storage_path: str = (
@@ -149,6 +153,7 @@ class Handler:
             self.cursor_db.execute(
                 f'CREATE TABLE IF NOT EXISTS "{parent_dir}" (id INTEGER PRIMARY KEY, file_name TEXT NOT NULL, file_extension TEXT NOT NULL, last_modified INTEGER NOT NULL, hash TEXT NOT NULL)'
             )
+            self.connection_db.commit()
         self.cursor_db.execute(
             f'INSERT INTO "{parent_dir}" VALUES (?, ?, ?, ?, ?)',
             (

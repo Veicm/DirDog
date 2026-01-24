@@ -51,7 +51,11 @@ class IPC:
         while True:
             connection: Connection[Any, Any] = self.listener.accept()
             print("connection successfull")
-            thread = Thread(target=self.receive, args=(connection,), daemon=True)
+            thread = Thread(
+                target=self.receive,
+                args=(connection,),
+                daemon=True,
+            )
             thread.start()
 
 
