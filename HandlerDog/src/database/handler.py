@@ -1,5 +1,4 @@
 import sqlite3
-import json
 
 
 class Handler:
@@ -21,10 +20,6 @@ class Handler:
             archive_path, check_same_thread=False
         )
         self.cursor_archive: sqlite3.Cursor = self.connection_archive.cursor()
-
-        self.storage_path: str = (
-            ".\\database\\data\\storage.json"  # TODO: Change path maybe
-        )
 
     def process_data(self, data: dict[str, str | int | None]) -> None:
         """Dispatch a file action to the corresponding handler.
@@ -149,11 +144,9 @@ class Handler:
         if not isinstance(parent_dir, str):
             raise ValueError(f"{parent_dir} is not a valid value of 'parent_dir'.")
         if self._is_new_dir(parent_dir):
-            self._add_new_dir_to_storage(parent_dir)
             self.cursor_db.execute(
                 f'CREATE TABLE IF NOT EXISTS "{parent_dir}" (id INTEGER PRIMARY KEY, file_name TEXT NOT NULL, file_extension TEXT NOT NULL, last_modified INTEGER NOT NULL, hash TEXT NOT NULL)'
             )
-            self.connection_db.commit()
         self.cursor_db.execute(
             f'INSERT INTO "{parent_dir}" VALUES (?, ?, ?, ?, ?)',
             (
@@ -190,7 +183,6 @@ class Handler:
             ):
                 # Prepare archive
                 if self._is_new_dir(parent_dir, True):
-                    self._add_new_dir_to_storage(parent_dir, True)
                     self.cursor_archive.execute(
                         f'CREATE TABLE IF NOT EXISTS "{parent_dir}" (id INTEGER PRIMARY KEY, file_name TEXT NOT NULL, file_extension TEXT NOT NULL, last_modified INTEGER NOT NULL, hash TEXT NOT NULL)'
                     )
@@ -220,7 +212,6 @@ class Handler:
                 if count == 0:
                     # deletes the table
                     self.cursor_db.execute(f'DROP TABLE "{parent_dir}"')
-                    self._remove_dir_from_storage(parent_dir)
 
         self.connection_db.commit()
         self.connection_archive.commit()
@@ -239,68 +230,29 @@ class Handler:
             bool: ``True`` if the directory is not yet registered, otherwise
             ``False``.
         """
-        json_data = {}
-        with open(self.storage_path) as json_file:
-            json_data: dict[str, list[str]] = json.load(json_file)
         if archive:
-            dir_list: list[str] | None = json_data.get("known_archives")
+            self.cursor_archive.execute(
+                """
+                SELECT 1
+                FROM sqlite_master
+                WHERE type='table' AND name=?
+                LIMIT 1;
+                """,
+                (dir_path,),
+            )
+            return self.cursor_archive.fetchone() is None
+
         else:
-            dir_list: list[str] | None = json_data.get("known_dirs")
-        if dir_list is not None:
-            for dir in dir_list:
-                if dir_path == dir:
-                    return False
-        return True
-
-    def _add_new_dir_to_storage(self, dir: str, archive: bool = False) -> None:
-        """Register a new directory in ``storage.json``.
-
-        Args:
-            dir (str): Directory path to register.
-            archive (bool): Whether to register the directory as an archive.
-        """
-        with open(self.storage_path) as json_file:
-            json_data: dict[str, list[str]] = json.load(json_file)
-
-        # Append new data
-        if archive:
-            if json_data.get("known_archives") is not None:
-                json_data["known_archives"].append(dir)
-            else:
-                raise ValueError("known_archives could not be found in storage.json.")
-        else:
-            if json_data.get("known_dirs") is not None:
-                json_data["known_dirs"].append(dir)
-            else:
-                raise ValueError("known_dirs could not be found in storage.json.")
-
-        # Write updated data back to the file
-        with open(self.storage_path, "w") as json_file:
-            json.dump(json_data, json_file, indent=4)
-
-    def _remove_dir_from_storage(self, dir: str, archive: bool = False) -> None:
-        """Unregister a directory from ``storage.json``.
-
-        Args:
-            dir (str): Directory path to remove.
-            archive (bool): Whether to remove the directory from the archive
-                registry.
-        """
-        with open(self.storage_path) as json_file:
-            json_data: dict[str, list[str]] = json.load(json_file)
-
-        key: str = "known_archives" if archive else "known_dirs"
-
-        if key not in json_data:
-            raise ValueError(f"{key} could not be found in storage.json.")
-
-        try:
-            json_data[key].remove(dir)
-        except ValueError:
-            raise ValueError(f"Dir '{dir}' not found in {key}.")
-
-        with open(self.storage_path, "w") as json_file:
-            json.dump(json_data, json_file, indent=4)
+            self.cursor_db.execute(
+                """
+                SELECT 1
+                FROM sqlite_master
+                WHERE type='table' AND name=?
+                LIMIT 1;
+                """,
+                (dir_path,),
+            )
+            return self.cursor_db.fetchone() is None
 
     def _detect_gap(self, table: str, archive: bool = False) -> int:
         """Return the first free ID in a table.
