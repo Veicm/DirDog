@@ -2,6 +2,7 @@ from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout,
     QLineEdit, QPushButton, QListWidget, QFileDialog
 )
+import os
 import json
 from pathlib import Path
 class PathListWidget(QWidget):
@@ -35,7 +36,7 @@ class PathListWidget(QWidget):
         self.remove_btn.clicked.connect(self.remove_selected)
 
         self.config_path = Path(
-                ".\\data\\data_storage.json"
+                os.getenv("APPDATA") + r"\DirDog\config\data_storage.json"
             )
 
         self.load_paths_into_GUI()
@@ -44,13 +45,13 @@ class PathListWidget(QWidget):
 
 
     def add_selected_to_json(self,input: str) -> None:
-        with open(".\\data\\data_storage.json","r") as file:
+        with self.config_path.open("r") as file:
             data: dict[str,bool | list[str]] = json.load(file)
         
 
         data["monitoring_dirs"].append(input)
 
-        with open(".\\data\\data_storage.json", "w", encoding="utf-8") as json_file:
+        with self.config_path.open("w", encoding="utf-8") as json_file:
             json.dump(data, json_file, indent=4, sort_keys=True, ensure_ascii=False)
         
 
