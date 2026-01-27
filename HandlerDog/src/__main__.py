@@ -1,8 +1,12 @@
 from ipc.receiver import IPC
+import os
 
 
 def main() -> None:
-    ipc = IPC(r"./database/data/demo.db", r"./database/data/demo_archive.db")
+    ipc = IPC(
+        str(os.getenv("APPDATA")) + r"\demo.db",
+        str(os.getenv("APPDATA")) + r"\demo_archive.db",
+    )
     ipc.run_threading()
 
 

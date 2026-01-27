@@ -1,6 +1,8 @@
 import random
 from PySide6.QtCore import QTimer, QObject, Signal
 from backend.backroud_logic import LogicHandler
+import os
+
 
 class DataController(QObject):
     pie_data_updated = Signal(dict)
@@ -11,7 +13,7 @@ class DataController(QObject):
         self.timer = QTimer()
         self.timer.timeout.connect(self.update_data)
         self.timer.start(1000)
-        self.logic_handler = LogicHandler(r"../../HandlerDog/src/database/data/demo.db")
+        self.logic_handler = LogicHandler(str(os.getenv("APPDATA")) + r"\demo.db")
 
     # === DATA SOURCE INTERFACE ===
     # Replace this method later with real application data
