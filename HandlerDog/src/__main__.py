@@ -4,8 +4,8 @@ import os
 
 def main() -> None:
     ipc = IPC(
-        str(os.getenv("APPDATA")) + r"\demo.db",
-        str(os.getenv("APPDATA")) + r"\demo_archive.db",
+        os.path.join(os.getenv("APPDATA"), "demo.db"),
+        os.path.join(os.getenv("APPDATA"), "demo_archive.db"),
     )
     ipc.run_threading()
 

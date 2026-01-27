@@ -1,4 +1,6 @@
-from watchdog.observers import Observer
+from watchdog.observers.polling import PollingObserver as Observer
+
+
 from watcher.Handler_class import Handler
 import threading
 import json

@@ -1,7 +1,7 @@
 from multiprocessing.connection import Connection, Listener
 from threading import Thread
 from typing import Any
-from database.handler import Handler
+from app_database.handler import Handler
 
 
 class IPC:
