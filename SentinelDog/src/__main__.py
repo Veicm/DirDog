@@ -1,11 +1,15 @@
 from watcher.check_changes import main as single_main
 import json
 from concurrent.futures import ThreadPoolExecutor
-
-
+import os
+from pathlib import Path
 def main() -> None:
+    os.chmod(os.getenv("APPDATA") + r"\DirDog",0o666 )
+             
+
+    config_path = os.getenv("APPDATA") + r"\DirDog\config\data_storage.json"
     with open(
-        r"../../DirDog/src/data/data_storage.json", "r", encoding="utf-8"
+        str(Path(config_path).resolve()), "r", encoding="utf-8"
     ) as config_file:
         data = json.load(config_file)
     paths = data["monitoring_dirs"]
