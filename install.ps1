@@ -1,5 +1,15 @@
 
 # Install DirDog from latest release of Veicm/DirDog
+# -------------------------------
+# Admin-Abfrage
+# -------------------------------
+if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
+    Write-Host "Skript benötigt Administratorrechte. Starte neu..."
+    $args = "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`""
+    Start-Process powershell -Verb RunAs -ArgumentList $args
+    exit
+}
+Write-Host "Skript läuft mit Administratorrechten!"
 
 # Set variables
 $repoOwner = "Veicm"
