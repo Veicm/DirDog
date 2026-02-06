@@ -4,7 +4,8 @@ from frontend.gui.window import MainWindow
 import os
 
 if __name__ == "__main__":
-    os.chmod(os.getenv("APPDATA") + r"\DirDog",0o666 )
+    path: str = os.path.join(os.getenv("APPDATA"), "DirDog")
+    os.chmod(path, 0o666)
     app = QApplication(sys.argv)
     window = MainWindow()
     window.show()
