@@ -1,79 +1,211 @@
+# =========================================================
+# DirDog Installer – CLEAN / GEHÄRTET / LIVE LOGGING
+# =========================================================
+# Vor Backup/Installation
+try {
+    $ExePath = "$ProgramDir\Frontend_exe_v2\__main__.exe"
+    $proc = Get-Process | Where-Object { $_.Path -eq $ExePath } -ErrorAction SilentlyContinue
+    if ($proc) {
+        Log "Beende laufende DirDog Prozesse..."
+        $proc | ForEach-Object { 
+            try { $_.Kill() } catch { Log "Fehler beim Beenden: $_" }
+        }
+        Start-Sleep -Seconds 2
+    }
+} catch {
+    Log "FEHLER beim Prüfen laufender Prozesse: $_"
+}
 
-# Install DirDog from latest release of Veicm/DirDog
+
+
+
+
+
+$ErrorActionPreference = "Stop"
+
 # -------------------------------
-# Admin-Abfrage
+# Logging
 # -------------------------------
-if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
-    Write-Host "Skript benötigt Administratorrechte. Starte neu..."
-    $args = "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`""
-    Start-Process powershell -Verb RunAs -ArgumentList $args
-    exit
-}
-Write-Host "Skript läuft mit Administratorrechten!"
+$LogFile = "$env:TEMP\DirDog_install.log"
 
-# Set variables
-$repoOwner = "Veicm"
-$repoName = "DirDog"
-$zipName = "DirDog.zip"
-$tempDir = "$env:TEMP\DirDogInstall"
-$appDataDir = "$env:APPDATA\DirDog"
-$programsDir = "C:\Program Files\DirDog"
-
-# Clean up previous temp
-if (Test-Path $tempDir) { Remove-Item -Recurse -Force $tempDir }
-New-Item -ItemType Directory -Path $tempDir | Out-Null
-
-# Get latest release info from GitHub API
-$apiUrl = "https://api.github.com/repos/$repoOwner/$repoName/releases/latest"
-$release = Invoke-RestMethod -Uri $apiUrl -Headers @{ "User-Agent" = "PowerShell" }
-
-# Find DirDog.zip asset
-$asset = $release.assets | Where-Object { $_.name -eq $zipName }
-if (-not $asset) {
-    Write-Error "DirDog.zip not found in the latest release."
-    exit
+function Log {
+    param([string]$Message)
+    $ts = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+    $line = "[$ts] $Message"
+    Write-Host $line
+    Add-Content -Path $LogFile -Value $line
 }
 
-# Download the zip
-$zipPath = Join-Path $tempDir $zipName
-Invoke-WebRequest -Uri $asset.browser_download_url -OutFile $zipPath
+try {
+    Log "===== INSTALLER START ====="
 
-# Extract the zip
-Expand-Archive -Path $zipPath -DestinationPath $tempDir -Force
+    # -------------------------------
+    # Admin Check
+    # -------------------------------
+    $identity  = [Security.Principal.WindowsIdentity]::GetCurrent()
+    $principal = New-Object Security.Principal.WindowsPrincipal($identity)
 
-# Create programs folder
-if (-not (Test-Path $programsDir)) { New-Item -ItemType Directory -Path $programsDir | Out-Null }
+    if (-not $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+        Write-Host "Keine Administratorrechte – Neustart als Administrator..."
+        Start-Process powershell -Verb RunAs -ArgumentList "-NoProfile -ExecutionPolicy Bypass -NoExit -File `"$PSCommandPath`""
+        exit
+    }
 
-# Move the three program folders
-Get-ChildItem -Path $tempDir -Directory | ForEach-Object {
-    $progName = $_.Name
-    $dest = Join-Path $programsDir $progName
-    if (Test-Path $dest) { Remove-Item -Recurse -Force $dest }
-    Move-Item -Path $_.FullName -Destination $dest
+    Write-Host "Administratorrechte bestätigt"
+
+    # -------------------------------
+    # Variablen
+    # -------------------------------
+    $RepoOwner   = "Veicm"
+    $RepoName    = "DirDog"
+    $ZipName     = "DirDog.zip"
+    $TimeStamp   = Get-Date -Format "yyyyMMdd_HHmmss"
+
+    $TempDir     = "$env:TEMP\DirDog_$TimeStamp"
+    $ProgramDir  = "C:\Program Files\DirDog"
+    $BackupDir   = "C:\Program Files\DirDog_BACKUP_$TimeStamp"
+    $AppDataDir  = "$env:APPDATA\DirDog"
+
+    Log "TempDir: $TempDir"
+
+    # -------------------------------
+    # Temp vorbereiten
+    # -------------------------------
+    try {
+        New-Item -ItemType Directory -Path $TempDir -Force | Out-Null
+    } catch {
+        Log "FEHLER beim Erstellen des Temp-Verzeichnisses: $_"
+        throw
+    }
+
+    # -------------------------------
+    # GitHub Release laden
+    # -------------------------------
+    try {
+        Log "Hole GitHub Release Info"
+        $ApiUrl  = "https://api.github.com/repos/$RepoOwner/$RepoName/releases/latest"
+        $Release = Invoke-RestMethod -Uri $ApiUrl -Headers @{ "User-Agent" = "PowerShell" }
+
+        $Asset = $Release.assets | Where-Object { $_.name -eq $ZipName }
+        if (-not $Asset) {
+            throw "DirDog.zip nicht gefunden im Release"
+        }
+
+        Log "Release Asset gefunden"
+    } catch {
+        Log "FEHLER beim Abrufen des GitHub Releases: $_"
+        throw
+    }
+
+    # -------------------------------
+    # Download (synchron, robust)
+    # -------------------------------
+    try {
+        $ZipPath = "$TempDir\$ZipName"
+        Log "Starte Download"
+
+        $wc = New-Object System.Net.WebClient
+        $wc.DownloadFile($Asset.browser_download_url, $ZipPath)
+
+        Log "Download abgeschlossen"
+    } catch {
+        Log "FEHLER beim Download: $_"
+        throw
+    }
+
+    # -------------------------------
+    # Entpacken
+    # -------------------------------
+    try {
+        Log "Entpacke ZIP"
+        Expand-Archive -Path $ZipPath -DestinationPath $TempDir -Force
+    } catch {
+        Log "FEHLER beim Entpacken: $_"
+        throw
+    }
+
+    # -------------------------------
+    # Programme vorbereiten
+    # -------------------------------
+    try {
+        if (Test-Path $ProgramDir) {
+            Log "Sichere bestehende Installation"
+            Rename-Item -Path $ProgramDir -NewName $BackupDir
+        }
+
+        Log "Installiere neue Version"
+        New-Item -ItemType Directory -Path $ProgramDir -Force | Out-Null
+
+        Get-ChildItem -Path $TempDir -Directory | Where-Object { $_.Name -ne "data" } | ForEach-Object {
+    		Log "Kopiere Programmordner: $($_.Name)"
+    		Copy-Item $_.FullName "$ProgramDir\$($_.Name)" -Recurse -Force
 }
 
-# Make one program manually startbar (create shortcut on Desktop)
-$mainProgram = Join-Path $programsDir "Frondend_exe\__main__.exe"  # passe "Program1" ggf. an den Ordnernamen an
-$desktopShortcut = "$env:USERPROFILE\Desktop\DirDog1.lnk"
-$WshShell = New-Object -ComObject WScript.Shell
-$shortcut = $WshShell.CreateShortcut($desktopShortcut)
-$shortcut.TargetPath = $mainProgram
-$shortcut.WorkingDirectory = Split-Path $mainProgram
-$shortcut.Save()
+    } catch {
+        Log "FEHLER beim Installieren der Programme: $_"
+        throw
+    }
 
-# Move specific folder contents to APPDATA
-$sourceAppFolder = Join-Path $programsDir "Program1\_internal"  # passe ggf. den Ordnernamen an
-if (Test-Path $sourceAppFolder) {
-    if (-not (Test-Path $appDataDir)) { New-Item -ItemType Directory -Path $appDataDir | Out-Null }
-    Get-ChildItem -Path $sourceAppFolder -Recurse | ForEach-Object {
-        $destPath = $_.FullName.Replace($sourceAppFolder, $appDataDir)
-        $destDir = Split-Path $destPath
-        if (-not (Test-Path $destDir)) { New-Item -ItemType Directory -Path $destDir | Out-Null }
-        Move-Item -Path $_.FullName -Destination $destPath -Force
+    # -------------------------------
+    # data → AppData (nur Inhalte)
+    # -------------------------------
+    try {
+        $DataSource = "$TempDir\data"
+        if (Test-Path $DataSource) {
+            Log "Verarbeite data Ordner"
+
+            New-Item -ItemType Directory -Path $AppDataDir -Force | Out-Null
+
+            Get-ChildItem $DataSource | ForEach-Object {
+    $Dest = "$AppDataDir\$($_.Name)"
+    if (-not (Test-Path $Dest)) {
+        Copy-Item $_.FullName $Dest -Recurse
+    } else {
+        Log "  existiert: $($_.Name) (übersprungen)"
     }
 }
 
-# Cleanup temp
-Remove-Item -Recurse -Force $tempDir
+        }
+    } catch {
+        Log "FEHLER beim Verarbeiten von data: $_"
+        throw
+    }
 
-Write-Output "DirDog installation complete!"
+    # -------------------------------
+    # Desktop Shortcut
+    # -------------------------------
+    try {
+        $ExePath = "$ProgramDir\Frontend_exe_v2\__main__.exe"
+        if (Test-Path $ExePath) {
+            Log "Erstelle Desktop Shortcut"
+            $ShortcutPath = "$env:USERPROFILE\Desktop\DirDog.lnk"
+            Remove-Item $ShortcutPath -ErrorAction SilentlyContinue
+
+            $Shell = New-Object -ComObject WScript.Shell
+            $SC = $Shell.CreateShortcut($ShortcutPath)
+            $SC.TargetPath = $ExePath
+            $SC.WorkingDirectory = Split-Path $ExePath
+            $SC.Save()
+        }
+    } catch {
+        Log "FEHLER beim Erstellen des Shortcuts: $_"
+        throw
+    }
+
+    # -------------------------------
+    # Cleanup
+    # -------------------------------
+    try {
+        Log "Cleanup Temp"
+        Remove-Item $TempDir -Recurse -Force
+    } catch {
+        Log "FEHLER beim Cleanup: $_"
+    }
+
+    Log "===== INSTALLATION ERFOLGREICH ====="
+} catch {
+    Log "`nINSTALLER ABGEBROCHEN! Fehler: $_"
+}
+
+Write-Host "`nDrücke eine beliebige Taste zum Beenden..."
+Read-Host
