@@ -1,4 +1,4 @@
-# =========================================================
+﻿# =========================================================
 # DirDog Installer – CLEAN / GEHÄRTET / LIVE LOGGING
 # =========================================================
 # Vor Backup/Installation
@@ -145,31 +145,36 @@ try {
         Log "FEHLER beim Installieren der Programme: $_"
         throw
     }
+# -------------------------------
+# data → AppData (ZIP-root)
+# -------------------------------
+try {
+    $DataSource = Join-Path $TempDir "data"
 
-    # -------------------------------
-    # data → AppData (nur Inhalte)
-    # -------------------------------
-    try {
-        $DataSource = "$TempDir\data"
-        if (Test-Path $DataSource) {
-            Log "Verarbeite data Ordner"
-
-            New-Item -ItemType Directory -Path $AppDataDir -Force | Out-Null
-
-            Get-ChildItem $DataSource | ForEach-Object {
-    $Dest = "$AppDataDir\$($_.Name)"
-    if (-not (Test-Path $Dest)) {
-        Copy-Item $_.FullName $Dest -Recurse
-    } else {
-        Log "  existiert: $($_.Name) (übersprungen)"
+    if (-not (Test-Path $DataSource)) {
+        throw "data Ordner nicht gefunden im ZIP: $DataSource"
     }
+
+    Log "Verarbeite data Ordner: $DataSource"
+
+    New-Item -ItemType Directory -Path $AppDataDir -Force | Out-Null
+
+    Get-ChildItem -Path $DataSource | ForEach-Object {
+        $Dest = Join-Path $AppDataDir $_.Name
+        if (-not (Test-Path $Dest)) {
+            Copy-Item $_.FullName $Dest -Recurse -Force
+        } else {
+            Log "  existiert: $($_.Name) (übersprungen)"
+        }
+    }
+
+} catch {
+    Log "FEHLER beim Verarbeiten von data: $_"
+    throw
 }
 
-        }
-    } catch {
-        Log "FEHLER beim Verarbeiten von data: $_"
-        throw
-    }
+
+
 
     # -------------------------------
     # Desktop Shortcut
