@@ -5,7 +5,7 @@ from PySide6.QtWidgets import (
 import os
 import json
 from pathlib import Path
-from ParentDog.src.parent import Parent
+from .helper.parent import Parent
 class PathListWidget(QWidget):
     def __init__(self):
         super().__init__()
