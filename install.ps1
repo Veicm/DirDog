@@ -1,5 +1,5 @@
 
-# DirDog Installer – CLEAN / GEHÄRTET / LIVE LOGGING
+# DirDog Installer ??? CLEAN / GEH??RTET / LIVE LOGGING
 
 # Vor Backup/Installation
 try {
@@ -13,7 +13,7 @@ try {
         Start-Sleep -Seconds 2
     }
 } catch {
-    Log "FEHLER beim Prüfen laufender Prozesse: $_"
+    Log "FEHLER beim Pr??fen laufender Prozesse: $_"
 }
 
 
@@ -46,12 +46,12 @@ try {
     $principal = New-Object Security.Principal.WindowsPrincipal($identity)
 
     if (-not $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
-        Write-Host "Keine Administratorrechte – Neustart als Administrator..."
+        Write-Host "Keine Administratorrechte ??? Neustart als Administrator..."
         Start-Process powershell -Verb RunAs -ArgumentList "-NoProfile -ExecutionPolicy Bypass -NoExit -File `"$PSCommandPath`""
         exit
     }
 
-    Write-Host "Administratorrechte bestätigt"
+    Write-Host "Administratorrechte best??tigt"
 
     # -------------------------------
     # Variablen
@@ -146,7 +146,7 @@ try {
         throw
     }
 # -------------------------------
-# data → AppData (ZIP-root)
+# data ??? AppData (ZIP-root)
 # -------------------------------
 try {
     $DataSource = Join-Path $TempDir "data"
@@ -164,7 +164,7 @@ try {
         if (-not (Test-Path $Dest)) {
             Copy-Item $_.FullName $Dest -Recurse -Force
         } else {
-            Log "  existiert: $($_.Name) (übersprungen)"
+            Log "  existiert: $($_.Name) (??bersprungen)"
         }
     }
 
@@ -200,7 +200,7 @@ try {
 # Autostart Shortcut
 # -------------------------------
 try {
-    Log "Erstelle Verknüpfung im Autostart"
+    Log "Erstelle Verkn??pfung im Autostart"
 
     $ExePath = "C:\Program Files\DirDog\ParentDog_exe\ParentDog.exe"
     if (-not (Test-Path $ExePath)) {
@@ -215,16 +215,16 @@ try {
     $Shortcut.WorkingDirectory = Split-Path $ExePath
     $Shortcut.Save()
 
-    Log "Autostart-Verknüpfung erfolgreich erstellt"
+    Log "Autostart-Verkn??pfung erfolgreich erstellt"
 }
 catch {
-    Log "FEHLER beim Erstellen der Verknüpfung im Autostart: $_"
+    Log "FEHLER beim Erstellen der Verkn??pfung im Autostart: $_"
 }
 
 
 
 
-Log "Erfolgreich die Verknüpfung im Autostart erstellt"
+Log "Erfolgreich die Verkn??pfung im Autostart erstellt"
     # -------------------------------
     # Cleanup
     # -------------------------------
@@ -240,5 +240,5 @@ Log "Erfolgreich die Verknüpfung im Autostart erstellt"
     Log "`nINSTALLER ABGEBROCHEN! Fehler: $_"
 }
 
-Write-Host "`nDrücke eine beliebige Taste zum Beenden..."
+Write-Host "`nDr??cke eine beliebige Taste zum Beenden..."
 Read-Host
