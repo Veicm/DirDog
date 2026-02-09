@@ -1,6 +1,6 @@
-﻿# =========================================================
+
 # DirDog Installer – CLEAN / GEHÄRTET / LIVE LOGGING
-# =========================================================
+
 # Vor Backup/Installation
 try {
     $ExePath = "$ProgramDir\Frontend_exe_v2\__main__.exe"
@@ -196,20 +196,29 @@ try {
         Log "FEHLER beim Erstellen des Shortcuts: $_"
         throw
     }
-try{
-    Log "Erstellen einer Verknüpfung im Autostart!"
+# -------------------------------
+# Autostart Shortcut
+# -------------------------------
+try {
+    Log "Erstelle Verknüpfung im Autostart"
+
     $ExePath = "C:\Program Files\DirDog\ParentDog_exe\ParentDog.exe"
+    if (-not (Test-Path $ExePath)) {
+        throw "Autostart-EXE nicht gefunden: $ExePath"
+    }
+
     $LnkPath = "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\Startup\DirDog.lnk"
-    
+
     $WshShell = New-Object -ComObject WScript.Shell
     $Shortcut = $WshShell.CreateShortcut($LnkPath)
-    
     $Shortcut.TargetPath = $ExePath
     $Shortcut.WorkingDirectory = Split-Path $ExePath
     $Shortcut.Save()
 
-} catch{
-    Log "FEHLER beim Erstellen der Verknüpfung im Autostart"
+    Log "Autostart-Verknüpfung erfolgreich erstellt"
+}
+catch {
+    Log "FEHLER beim Erstellen der Verknüpfung im Autostart: $_"
 }
 
 
