@@ -196,7 +196,26 @@ try {
         Log "FEHLER beim Erstellen des Shortcuts: $_"
         throw
     }
+try{
+    Log "Erstellen einer Verknüpfung im Autostart!"
+    $ExePath = "C:\Program Files\DirDog\Frontend_exe_v2\DirDog.exe"
+    $LnkPath = "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\Startup\DirDog.lnk"
+    
+    $WshShell = New-Object -ComObject WScript.Shell
+    $Shortcut = $WshShell.CreateShortcut($LnkPath)
+    
+    $Shortcut.TargetPath = $ExePath
+    $Shortcut.WorkingDirectory = Split-Path $ExePath
+    $Shortcut.Save()
 
+} catch{
+    Log "FEHLER beim Erstellen der Verknüpfung im Autostart"
+}
+
+
+
+
+Log "Erfolgreich die Verknüpfung im Autostart erstellt"
     # -------------------------------
     # Cleanup
     # -------------------------------
