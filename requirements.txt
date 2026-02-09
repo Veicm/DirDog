@@ -2,3 +2,4 @@ py_essentials
 watchdog
 pyqtgraph
 PySide6
+psutil
