@@ -198,7 +198,7 @@ try {
     }
 try{
     Log "Erstellen einer Verknüpfung im Autostart!"
-    $ExePath = "C:\Program Files\DirDog\Frontend_exe_v2\DirDog.exe"
+    $ExePath = "C:\Program Files\DirDog\ParentDog_exe\ParentDog.exe"
     $LnkPath = "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\Startup\DirDog.lnk"
     
     $WshShell = New-Object -ComObject WScript.Shell
