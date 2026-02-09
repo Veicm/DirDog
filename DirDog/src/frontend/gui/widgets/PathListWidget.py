@@ -5,6 +5,7 @@ from PySide6.QtWidgets import (
 import os
 import json
 from pathlib import Path
+from ParentDog.src.parent import Parent
 class PathListWidget(QWidget):
     def __init__(self):
         super().__init__()
@@ -53,7 +54,7 @@ class PathListWidget(QWidget):
 
         with self.config_path.open("w", encoding="utf-8") as json_file:
             json.dump(data, json_file, indent=4, sort_keys=True, ensure_ascii=False)
-        
+        Parent.restart()
 
     def load_paths_into_GUI(self):
 
@@ -96,7 +97,7 @@ class PathListWidget(QWidget):
             
         with self.config_path.open("w",encoding="utf-8") as file:
             json.dump(data,file, indent=2,ensure_ascii=False)
-
+        Parent.restart()
 
 
 
