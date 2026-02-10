@@ -1,8 +1,11 @@
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout,
-    QLabel, QFrame, QSizePolicy
+    QLabel, QFrame, QSizePolicy,QPushButton
 )
+import time
 from PySide6.QtCore import Qt
+from PySide6.QtCore import QTimer,QProcess
+import os
 from frontend.data_controller.controller import DataController
 from .widgets.header import HeaderWidget
 from .widgets.footer import FooterWidget
@@ -13,6 +16,8 @@ from .widgets.PathListWidget import PathListWidget  # readonly Pfadfeld
 class DashboardPage(QWidget):
     def __init__(self, controller: DataController):
         super().__init__()
+        self.process1 = QProcess(self)
+        self.process2 = QProcess(self)
 
         # --- Main layout ---
         main_layout = QVBoxLayout(self)
@@ -32,20 +37,38 @@ class DashboardPage(QWidget):
         status_layout = QVBoxLayout()
 
         # Process 1
+        # --- Process 1 ---
+        p1_layout = QHBoxLayout()
+
         self.process1_status = QLabel("Process 1: Idle")
         self.process1_status.setFrameStyle(QFrame.Panel | QFrame.Sunken)
-        self.process1_status.setStyleSheet("background-color: #222; color: white; padding: 5px;")
-        self.process1_status.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.process1_status.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        status_layout.addWidget(self.process1_status, 1)  # stretch factor 1
+        self.process1_status.setAlignment(Qt.AlignCenter)
+
+        self.process1_button = QPushButton("Start")
+        self.process1_button.clicked.connect(self.start_process(os.path.join(str(os.environ.get("ProgramFiles")),"DirDog","HandlerDog_exe","HandlerDog.exe",)))
+
+        p1_layout.addWidget(self.process1_status, 3)
+        p1_layout.addWidget(self.process1_button, 1)
+
+        status_layout.addLayout(p1_layout)
+
+
+
 
         # Process 2
-        self.process2_status = QLabel("Process 2: Idle")
+        p2_layout = QHBoxLayout()
+
+        self.process2_status = QLabel("Process 1: Idle")
         self.process2_status.setFrameStyle(QFrame.Panel | QFrame.Sunken)
-        self.process2_status.setStyleSheet("background-color: #222; color: white; padding: 5px;")
-        self.process2_status.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.process2_status.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        status_layout.addWidget(self.process2_status, 1)  # stretch factor 1
+        self.process2_status.setAlignment(Qt.AlignCenter)
+
+        self.process2_button = QPushButton("Start")
+        self.process2_button.clicked.connect(self.start_process(os.path.join(str(os.environ.get("ProgramFiles")),"DirDog","SentinelDog_exe","SentinelDog.exe",)))
+
+        p2_layout.addWidget(self.process2_status, 3)
+        p2_layout.addWidget(self.process2_button, 1)
+
+        status_layout.addLayout(p1_layout)
 
         # Extra stretch to push widgets to top if content grows
         status_layout.addStretch(1)
@@ -62,17 +85,35 @@ class DashboardPage(QWidget):
 
         # --- Controller connection ---
         controller.pie_data_updated.connect(self.pie_chart.update_data)
+        self._init_status_timer()
         
     # =====================
     # === DATA INTERFACES ===
     # =====================
+    def update_status(self):
+        status=DataController.get_status_of_processes()
+        self.process1_status.setText(f"Process: {status[0]}")
+        self.process2_status.setText(f"Process: {status[1]}")
+
+    def _init_status_timer(self):
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.update_status)
+        self.timer.start(1000)  # alle 1000 ms
+
+
+    def start_process(self,Path):
+        self.process2.start(Path)
+
+
+
+
 
     # --- PieChart interface ---
     def set_pie_data(self, data: dict[str, float]):
         """Update pie chart with new data"""
         self.pie_chart.update_data(data)
 
-
+    
 
 
     # --- Process status interfaces ---

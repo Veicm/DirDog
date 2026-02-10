@@ -1,7 +1,7 @@
 from PySide6.QtCore import QTimer, QObject, Signal
 from backend.background_logic import LogicHandler
 import os
-
+import json
 
 class DataController(QObject):
     pie_data_updated = Signal(dict)
@@ -15,7 +15,7 @@ class DataController(QObject):
         self.logic_handler = LogicHandler(
             os.path.join(str(os.getenv("APPDATA")), "DirDog", "demo.db")
         )
-
+        self.config_path = os.path.join(str(os.getenv("APPDATA")), "DirDog","config","data_storage.json")
     # === DATA SOURCE INTERFACE ===
     # Replace this method later with real application data
     def update_data(self):
@@ -26,3 +26,10 @@ class DataController(QObject):
     # You can call this manually to push data from outside
     def set_pie_data(self, data: dict[str, float]):
         self.pie_data_updated.emit(data)
+    
+    # === GET STATUS FROM CONFIG ===
+
+    def get_status_of_processes(self):
+        with open(self.config_path,"r") as file:
+            data = json.load(file)
+        return str(data["is_running_sentinel"]),str(data["is_running_handler"])
