@@ -45,7 +45,17 @@ class DashboardPage(QWidget):
         self.process1_status.setAlignment(Qt.AlignCenter)
 
         self.process1_button = QPushButton("Start")
-        self.process1_button.clicked.connect(self.start_process(os.path.join(str(os.environ.get("ProgramFiles")),"DirDog","HandlerDog_exe","HandlerDog.exe",)))
+        self.process1_button.clicked.connect(
+            lambda: self.start_process(
+                os.path.join(
+                    str(os.environ.get("ProgramFiles")),
+                    "DirDog",
+                    "HandlerDog_exe",
+                    "HandlerDog.exe",
+                )
+            )
+        )
+
 
         p1_layout.addWidget(self.process1_status, 3)
         p1_layout.addWidget(self.process1_button, 1)
@@ -63,7 +73,17 @@ class DashboardPage(QWidget):
         self.process2_status.setAlignment(Qt.AlignCenter)
 
         self.process2_button = QPushButton("Start")
-        self.process2_button.clicked.connect(self.start_process(os.path.join(str(os.environ.get("ProgramFiles")),"DirDog","SentinelDog_exe","SentinelDog.exe",)))
+        self.process2_button.clicked.connect(
+            lambda: self.start_process(
+                os.path.join(
+                    str(os.environ.get("ProgramFiles")),
+                    "DirDog",
+                    "SentinelDog_exe",
+                    "SentinelDog.exe",
+                )
+            )
+        )
+
 
         p2_layout.addWidget(self.process2_status, 3)
         p2_layout.addWidget(self.process2_button, 1)
