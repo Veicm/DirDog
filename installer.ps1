@@ -179,23 +179,30 @@ try {
     # -------------------------------
     # Desktop Shortcut
     # -------------------------------
-    try {
-        $ExePath = "$ProgramDir\Frontend_exe_v2\__main__.exe"
-        if (Test-Path $ExePath) {
-            Log "Erstelle Desktop Shortcut"
-            $ShortcutPath = "$env:USERPROFILE\Desktop\DirDog.lnk"
-            Remove-Item $ShortcutPath -ErrorAction SilentlyContinue
+try {
+    $ExePath = "$ProgramDir\DirDog_exe\DirDog.exe"
+    $DesktopPath = [Environment]::GetFolderPath("Desktop")
+    $ShortcutPath = Join-Path $DesktopPath "DirDog.lnk"
 
-            $Shell = New-Object -ComObject WScript.Shell
-            $SC = $Shell.CreateShortcut($ShortcutPath)
-            $SC.TargetPath = $ExePath
-            $SC.WorkingDirectory = Split-Path $ExePath
-            $SC.Save()
-        }
-    } catch {
-        Log "FEHLER beim Erstellen des Shortcuts: $_"
-        throw
+    Log "Prüfe EXE: $ExePath"
+    if (-not (Test-Path $ExePath)) {
+        Log "FEHLER: EXE existiert nicht, Desktop Shortcut wird nicht erstellt"
+    } else {
+        Log "Erstelle Desktop Shortcut: $ShortcutPath"
+        Remove-Item $ShortcutPath -ErrorAction SilentlyContinue
+
+        $Shell = New-Object -ComObject WScript.Shell
+        $SC = $Shell.CreateShortcut($ShortcutPath)
+        $SC.TargetPath = $ExePath
+        $SC.WorkingDirectory = Split-Path $ExePath
+        $SC.Save()
+
+        Log "Desktop Shortcut erfolgreich erstellt"
     }
+} catch {
+    Log "FEHLER beim Erstellen des Desktop Shortcuts: $_"
+    throw
+}
 # -------------------------------
 # Autostart Shortcut
 # -------------------------------
