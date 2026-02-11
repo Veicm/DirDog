@@ -40,7 +40,7 @@ class DashboardPage(QWidget):
         # --- Process 1 ---
         p1_layout = QHBoxLayout()
 
-        self.process1_status = QLabel("Process 1: Idle")
+        self.process1_status = QLabel("Sentinel: Idle")
         self.process1_status.setFrameStyle(QFrame.Panel | QFrame.Sunken)
         self.process1_status.setAlignment(Qt.AlignCenter)
 
@@ -68,7 +68,7 @@ class DashboardPage(QWidget):
         # Process 2
         p2_layout = QHBoxLayout()
 
-        self.process2_status = QLabel("Process 1: Idle")
+        self.process2_status = QLabel("Handler: Idle")
         self.process2_status.setFrameStyle(QFrame.Panel | QFrame.Sunken)
         self.process2_status.setAlignment(Qt.AlignCenter)
 
@@ -88,7 +88,7 @@ class DashboardPage(QWidget):
         p2_layout.addWidget(self.process2_status, 3)
         p2_layout.addWidget(self.process2_button, 1)
 
-        status_layout.addLayout(p1_layout)
+        status_layout.addLayout(p2_layout)
 
         # Extra stretch to push widgets to top if content grows
         status_layout.addStretch(1)
@@ -111,9 +111,10 @@ class DashboardPage(QWidget):
     # === DATA INTERFACES ===
     # =====================
     def update_status(self):
-        status=DataController.get_status_of_processes()
-        self.process1_status.setText(f"Process: {status[0]}")
-        self.process2_status.setText(f"Process: {status[1]}")
+        controller = DataController()
+        status=controller.get_status_of_processes()
+        self.process1_status.setText(f"Sentinel: {status[0]}")
+        self.process2_status.setText(f"Handler: {status[1]}")
 
     def _init_status_timer(self):
         self.timer = QTimer(self)
