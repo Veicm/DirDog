@@ -1,11 +1,18 @@
 from PySide6.QtWidgets import (
-    QWidget, QVBoxLayout, QHBoxLayout,
-    QLineEdit, QPushButton, QListWidget, QFileDialog
+    QWidget,
+    QVBoxLayout,
+    QHBoxLayout,
+    QLineEdit,
+    QPushButton,
+    QListWidget,
+    QFileDialog,
 )
 import os
 import json
 from pathlib import Path
 from .helper.parent import Parent
+
+
 class PathListWidget(QWidget):
     def __init__(self):
         super().__init__()
@@ -17,9 +24,7 @@ class PathListWidget(QWidget):
 
         self.browse_btn = QPushButton("Browse...")
 
-
         input_layout.addWidget(self.browse_btn)
-
 
         layout.addLayout(input_layout)
 
@@ -37,36 +42,33 @@ class PathListWidget(QWidget):
         self.remove_btn.clicked.connect(self.remove_selected)
 
         self.config_path = Path(
-                os.getenv("APPDATA") + r"\DirDog\config\data_storage.json"
-            )
+            os.getenv("APPDATA") + r"\DirDog\config\data_storage.json"
+        )
 
         self.load_paths_into_GUI()
 
+        self.parent = Parent()
 
-
-
-    def add_selected_to_json(self,input: str) -> None:
+    def add_selected_to_json(self, input: str) -> None:
         with self.config_path.open("r") as file:
-            data: dict[str,bool | list[str]] = json.load(file)
-        
+            data: dict[str, bool | list[str]] = json.load(file)
 
         data["monitoring_dirs"].append(input)
 
         with self.config_path.open("w", encoding="utf-8") as json_file:
             json.dump(data, json_file, indent=4, sort_keys=True, ensure_ascii=False)
-        Parent.restart()
+        self.parent.restart()
 
     def load_paths_into_GUI(self):
 
-        with self.config_path.open("r",encoding="utf-8") as file:
+        with self.config_path.open("r", encoding="utf-8") as file:
             data = json.load(file)
-        
+
         for path in data["monitoring_dirs"]:
             if path is None:
                 path = self.path_input.text()
             if path:
                 self.path_list.addItem(path)
-        
 
     # === DATA INTERFACE ===
     def add_path_to_GUI(self, path: str = None):
@@ -79,27 +81,23 @@ class PathListWidget(QWidget):
 
     def remove_selected(self):
         """Remove selected paths"""
-        with self.config_path.open("r",encoding="utf-8") as file:
+        with self.config_path.open("r", encoding="utf-8") as file:
             data = json.load(file)
 
-        
         for item in self.path_list.selectedItems():
             path = item.text()
-            
-            
+
             self.path_list.takeItem(self.path_list.row(item))
-            
 
             data["monitoring_dirs"] = [
-                p for p in data["monitoring_dirs"]
+                p
+                for p in data["monitoring_dirs"]
                 if str(Path(p).resolve()) != str(Path(path).resolve())
             ]
-            
-        with self.config_path.open("w",encoding="utf-8") as file:
-            json.dump(data,file, indent=2,ensure_ascii=False)
-        Parent.restart()
 
-
+        with self.config_path.open("w", encoding="utf-8") as file:
+            json.dump(data, file, indent=2, ensure_ascii=False)
+        self.parent.restart()
 
     def browse_path(self):
         """Open a file/folder dialog and add the selected path"""
