@@ -12,6 +12,14 @@
 DirDog is a Python-based directory watchdog for Windows systems.
 It consists of three subprograms in one repository: a main controller handling user interaction and startup logic, a listener monitoring directories for changes, and a processor handling added or removed files.
 
+## Installation/Update
+
+Open PowerShell as administrator and run the following command:
+
+```PowerShell
+iwr https://raw.githubusercontent.com/user/repo/main/script.ps1 | iex
+```
+
 ## Documentation
 
 [Documentation (DeepWiki)](https://deepwiki.com/Veicm/DirDog)
