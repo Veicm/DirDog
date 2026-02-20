@@ -167,10 +167,6 @@ git push origin [feature name]
 
 ##### 6. Create a PR
 
-### Improving The Documentation
-
-If you think that something is missing in the [documentation](https://github.com/Veicm/Dev_Ink/wiki), please write a markdown file which contains your additions and send it to <veicm.development@gmx.de>.
-
 ### Commit Messages
 
 Commit messages should be a short summery of the changes since the last commit.
